@@ -1,7 +1,12 @@
 import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
+import 'package:bounchan_hotel_admin_app/models/loginModel.dart';
 import 'package:bounchan_hotel_admin_app/pages/home/homePage.dart';
+import 'package:bounchan_hotel_admin_app/services/staffService.dart';
+import 'package:bounchan_hotel_admin_app/utils/storageManager.dart';
+import 'package:bounchan_hotel_admin_app/widgets/errorDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -13,10 +18,27 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneNumberController = TextEditingController(text: "2078966646");
-  final _passwordController = TextEditingController(text: "123456");
+  final _loadingKey = GlobalKey<State>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isRemember = false;
   bool _showPassword = false;
+
+  Future loadData() async {
+    _emailController.text = await StorageManager.readData("email");
+    _passwordController.text = await StorageManager.readData("password");
+    setState(() {
+      if (_passwordController.text.isNotEmpty) {
+        _isRemember = true;
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
-                color: Colors.black45,
+                color: ColorConstants.black.withAlpha(150),
                 child: Form(
                   key: _formKey,
                   child: SingleChildScrollView(
@@ -72,13 +94,13 @@ class _LoginPageState extends State<LoginPage> {
                           Padding(
                             padding: EdgeInsets.only(left: 2, bottom: 2),
                             child: Text(
-                              "ເບີໂທລະສັບ",
+                              "ອີເມລ",
                               style:
                                   getRegularStyle(color: ColorConstants.white),
                             ),
                           ),
                           TextFormField(
-                            controller: _phoneNumberController,
+                            controller: _emailController,
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(6),
@@ -95,7 +117,7 @@ class _LoginPageState extends State<LoginPage> {
                                 borderSide: BorderSide(
                                     width: 0.5, color: ColorConstants.white),
                               ),
-                              hintText: "20xxxxxxxx",
+                              hintText: "example@gmail.com",
                               hintStyle: getRegularStyle(
                                   color: ColorConstants.lightGrey),
                               errorBorder: OutlineInputBorder(
@@ -108,16 +130,17 @@ class _LoginPageState extends State<LoginPage> {
                               contentPadding: EdgeInsets.symmetric(
                                   vertical: 0, horizontal: 10),
                             ),
-                            maxLength: 10,
+                            keyboardType: TextInputType.emailAddress,
                             style: getRegularStyle(color: ColorConstants.white),
                             validator: (value) {
-                              if (_phoneNumberController.text.isEmpty ||
-                                  _phoneNumberController.text == "") {
-                                return "ກະລຸນາປ້ອນເບີໂທລະສັບ";
+                              if (_emailController.text.isEmpty ||
+                                  _emailController.text == "") {
+                                return "ກະລຸນາປ້ອນອີເມລ";
                               }
                               return null;
                             },
                           ),
+                          SizedBox(height: 15),
                           Padding(
                             padding: EdgeInsets.only(left: 2, bottom: 2),
                             child: Text(
@@ -214,13 +237,38 @@ class _LoginPageState extends State<LoginPage> {
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => HomePage()),
-                                      (route) => false);
+                                  LoadingDialogWidget.showLoading(
+                                      context, _loadingKey);
+                                  await Future.delayed(Duration(seconds: 1));
+                                  LoginModel? loginModel = await loginService(
+                                      email: _emailController.text,
+                                      password: _passwordController.text);
+                                  Navigator.of(_loadingKey.currentContext!,
+                                          rootNavigator: true)
+                                      .pop();
+                                  if (loginModel != null) {
+                                    if (_isRemember) {
+                                      StorageManager.saveData("password",
+                                          loginModel.result!.data!.password);
+                                    }
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => HomePage()),
+                                        (route) => false);
+                                  } else {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ErrorDialogWidget(
+                                          detail:
+                                              "ອີເມລ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+                                        );
+                                      },
+                                    );
+                                  }
                                 }
                               },
                               style: ButtonStyle(

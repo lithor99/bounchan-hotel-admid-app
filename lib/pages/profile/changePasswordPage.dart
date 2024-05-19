@@ -1,10 +1,15 @@
 import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
+import 'package:bounchan_hotel_admin_app/services/staffService.dart';
+import 'package:bounchan_hotel_admin_app/widgets/errorDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
+  final String id;
+  const ChangePasswordPage({super.key, required this.id});
 
   @override
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
@@ -12,6 +17,7 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPageState extends State<ChangePasswordPage> {
   final _formKey = GlobalKey<FormState>();
+  final _loadingKey = GlobalKey<State>();
   TextEditingController _oldPasswordController = TextEditingController();
   TextEditingController _newPasswordController = TextEditingController();
   TextEditingController _confirmPasswordController = TextEditingController();
@@ -199,6 +205,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     if (_confirmPasswordController.text.isEmpty ||
                         _confirmPasswordController.text == "") {
                       return "ກະລຸນາຢືນຢັນລະຫັດຜ່ານໃໝ່";
+                    } else if (_newPasswordController.text !=
+                        _confirmPasswordController.text) {
+                      return "ລະຫັດຜ່ານໃໝ່ບໍ່ກົງກັນ";
                     }
                     return null;
                   },
@@ -224,8 +233,45 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 height: 60,
                 width: MediaQuery.of(context).size.width / 2 - 1,
                 child: InkWell(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {}
+                  onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      LoadingDialogWidget.showLoading(context, _loadingKey);
+                      String result = await changePasswordService(
+                          id: widget.id,
+                          oldPassword: _oldPasswordController.text,
+                          newPassword: _newPasswordController.text);
+                      Navigator.of(_loadingKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
+                      if (result == "success") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SuccessDialogWidget(
+                              detail: "ປ່ຽນລະຫັດຜ່ານສຳເລັດ",
+                            );
+                          },
+                        );
+                      } else if (result == "incorrect") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ລະຫັດຜ່ານເກົ່າບໍ່ຖືກຕ້ອງ",
+                            );
+                          },
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ເກີດຂໍ້ຜິດພາດ",
+                            );
+                          },
+                        );
+                      }
+                    }
                   },
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
                   child: Row(

@@ -1,7 +1,17 @@
+import 'dart:io';
+
 import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
+import 'package:bounchan_hotel_admin_app/models/uploadModel.dart';
+import 'package:bounchan_hotel_admin_app/services/roomTypeService.dart';
+import 'package:bounchan_hotel_admin_app/services/staffService.dart';
+import 'package:bounchan_hotel_admin_app/widgets/errorDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class RoomTypeAddPage extends StatefulWidget {
   const RoomTypeAddPage({super.key});
@@ -12,7 +22,41 @@ class RoomTypeAddPage extends StatefulWidget {
 
 class _RoomTypeAddPageState extends State<RoomTypeAddPage> {
   final _formKey = GlobalKey<FormState>();
+  final _loadingKey = GlobalKey<State>();
   TextEditingController _roomTypeNameController = TextEditingController();
+
+  CroppedFile? _croppedFile;
+
+  Future<void> _onBrowImage() async {
+    XFile? fileImage = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        preferredCameraDevice: CameraDevice.rear,
+        imageQuality: 20);
+    if (fileImage != null) {
+      _croppedFile = await ImageCropper().cropImage(
+        cropStyle: CropStyle.rectangle,
+        sourcePath: fileImage.path,
+        compressQuality: 20,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: '',
+              toolbarColor: ColorConstants.primary,
+              toolbarWidgetColor: ColorConstants.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: false),
+          IOSUiSettings(
+              title: '',
+              aspectRatioPickerButtonHidden: true,
+              resetButtonHidden: true),
+        ],
+      );
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +70,40 @@ class _RoomTypeAddPageState extends State<RoomTypeAddPage> {
           child: Padding(
             padding: EdgeInsets.all(10),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width - 20,
-                  height: MediaQuery.of(context).size.width - 20,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6),
-                      image: DecorationImage(
-                        image: NetworkImage(
-                            "https://media.istockphoto.com/id/1365561421/photo/brown-wooden-bed-with-linens-isolated-on-white-background.jpg?s=612x612&w=0&k=20&c=PimPm6zp-jyIm0gj6sUGFitPxl3Upt1WQ5Ew_ztGHHY="),
-                        fit: BoxFit.cover,
-                      )),
-                ),
+                    width: MediaQuery.of(context).size.width - 20,
+                    height: MediaQuery.of(context).size.width - 20,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        color: ColorConstants.darkGrey,
+                        image: _croppedFile != null
+                            ? DecorationImage(
+                                image: FileImage(File(_croppedFile!.path)),
+                                fit: BoxFit.cover,
+                              )
+                            : null),
+                    child: _croppedFile == null
+                        ? SizedBox(
+                            height: MediaQuery.of(context).size.width - 20,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.image_search_outlined,
+                                  size: 100,
+                                  color: ColorConstants.primary,
+                                ),
+                              ],
+                            ),
+                          )
+                        : null),
                 SizedBox(height: 15),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    _onBrowImage();
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width - 20,
                     height: 55,
@@ -55,7 +118,7 @@ class _RoomTypeAddPageState extends State<RoomTypeAddPage> {
                           Icon(Icons.add_circle_outline_rounded),
                           SizedBox(width: 5),
                           Text(
-                            "ເພີ່ມຮູບພາບ",
+                            "ເລືອກຮູບພາບ",
                             style: getRegularStyle(color: ColorConstants.black),
                           )
                         ],
@@ -127,8 +190,53 @@ class _RoomTypeAddPageState extends State<RoomTypeAddPage> {
                 height: 60,
                 width: MediaQuery.of(context).size.width / 2 - 1,
                 child: InkWell(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {}
+                  onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      if (_croppedFile == null) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ກະລຸນາເລືອກຮູບພາບ",
+                            );
+                          },
+                        );
+                        return;
+                      } else {
+                        LoadingDialogWidget.showLoading(context, _loadingKey);
+                        UploadModel? uploadModel = await uploadFileService(
+                            file: File(_croppedFile!.path));
+                        String result = await createRoomTypeService(
+                            name: _roomTypeNameController.text,
+                            image: uploadModel!.url!);
+                        Navigator.of(_loadingKey.currentContext!,
+                                rootNavigator: true)
+                            .pop();
+                        if (result == "success") {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SuccessDialogWidget(
+                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                              );
+                            },
+                          );
+                          setState(() {
+                            _roomTypeNameController.clear();
+                            _croppedFile = null;
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ErrorDialogWidget(
+                                detail: "ເກີດຂໍ້ຜິດພາດ",
+                              );
+                            },
+                          );
+                        }
+                      }
+                    }
                   },
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
                   child: Row(

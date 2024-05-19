@@ -1,7 +1,17 @@
+import 'dart:io';
+
 import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
+import 'package:bounchan_hotel_admin_app/models/staffModel.dart';
+import 'package:bounchan_hotel_admin_app/models/uploadModel.dart';
+import 'package:bounchan_hotel_admin_app/services/staffService.dart';
+import 'package:bounchan_hotel_admin_app/widgets/errorDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class StaffAddPage extends StatefulWidget {
   const StaffAddPage({super.key});
@@ -12,6 +22,7 @@ class StaffAddPage extends StatefulWidget {
 
 class _StaffAddPageState extends State<StaffAddPage> {
   final _formKey = GlobalKey<FormState>();
+  final _loadingKey = GlobalKey<State>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
@@ -20,8 +31,41 @@ class _StaffAddPageState extends State<StaffAddPage> {
   TextEditingController _addressController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   bool _showPassword = false;
-  int? _role;
+  int _role = 0;
   String _gender = "";
+  String? _image;
+
+  CroppedFile? _croppedFile;
+
+  Future<void> _onTakeImage() async {
+    XFile? fileImage = await ImagePicker().pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+        imageQuality: 20);
+    if (fileImage != null) {
+      _croppedFile = await ImageCropper().cropImage(
+        cropStyle: CropStyle.rectangle,
+        sourcePath: fileImage.path,
+        compressQuality: 20,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+        ],
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: '',
+              toolbarColor: ColorConstants.primary,
+              toolbarWidgetColor: ColorConstants.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: false),
+          IOSUiSettings(
+              title: '',
+              aspectRatioPickerButtonHidden: true,
+              resetButtonHidden: true),
+        ],
+      );
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +84,30 @@ class _StaffAddPageState extends State<StaffAddPage> {
               children: [
                 Center(
                   child: CircleAvatar(
-                    radius: 81,
-                    backgroundColor: ColorConstants.black,
+                    radius: 82,
+                    backgroundColor: ColorConstants.primary,
                     child: CircleAvatar(
                       radius: 80,
                       backgroundColor: ColorConstants.primary,
-                      backgroundImage: NetworkImage(
-                          "https://cdn-icons-png.flaticon.com/512/3870/3870822.png"),
+                      backgroundImage:
+                          _croppedFile != null && _croppedFile != ""
+                              ? FileImage(File(_croppedFile!.path))
+                              : null,
+                      child: _croppedFile == null || _croppedFile == ""
+                          ? Icon(
+                              Icons.person,
+                              color: ColorConstants.black,
+                              size: 50,
+                            )
+                          : null,
                     ),
                   ),
                 ),
                 Center(
                   child: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _onTakeImage();
+                      },
                       icon: Icon(
                         Icons.add_a_photo_rounded,
                         size: 30,
@@ -216,6 +271,7 @@ class _StaffAddPageState extends State<StaffAddPage> {
                     }
                     return null;
                   },
+                  keyboardType: TextInputType.phone,
                 ),
                 SizedBox(height: 15),
                 Text(
@@ -251,6 +307,7 @@ class _StaffAddPageState extends State<StaffAddPage> {
                     contentPadding:
                         EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                   ),
+                  keyboardType: TextInputType.emailAddress,
                   style: getRegularStyle(color: ColorConstants.white),
                 ),
                 SizedBox(height: 15),
@@ -413,7 +470,7 @@ class _StaffAddPageState extends State<StaffAddPage> {
                       },
                     ),
                     Text(
-                      "ພະນັກງານ",
+                      "ພະນັກງານທົ່ວໄປ",
                       style: getRegularStyle(color: ColorConstants.white),
                     ),
                   ],
@@ -439,8 +496,105 @@ class _StaffAddPageState extends State<StaffAddPage> {
                 height: 60,
                 width: MediaQuery.of(context).size.width / 2 - 1,
                 child: InkWell(
-                  onTap: () {
-                    if (_formKey.currentState!.validate()) {}
+                  onTap: () async {
+                    if (_formKey.currentState!.validate()) {
+                      LoadingDialogWidget.showLoading(context, _loadingKey);
+                      if (_croppedFile != null) {
+                        UploadModel? uploadModel = await uploadFileService(
+                            file: File(_croppedFile!.path));
+                        if (uploadModel!.url != null) {
+                          _image = uploadModel.url;
+                        }
+                        StaffModel? staffModel = await createStaffService(
+                          name: _nameController.text,
+                          lastName: _lastNameController.text,
+                          phoneNumber: _phoneNumberController.text,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          gender: _gender,
+                          image: _image!,
+                          birthDate: _birthDateController.text,
+                          address: _addressController.text,
+                          role: _role,
+                        );
+                        Navigator.of(_loadingKey.currentContext!,
+                                rootNavigator: true)
+                            .pop();
+                        if (staffModel != null) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SuccessDialogWidget(
+                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                              );
+                            },
+                          );
+                          setState(() {
+                            _nameController.clear();
+                            _lastNameController.clear();
+                            _emailController.clear();
+                            _phoneNumberController.clear();
+                            _addressController.clear();
+                            _passwordController.clear();
+                            _birthDateController.clear();
+                            _croppedFile == null;
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ErrorDialogWidget(
+                                detail: "ເກີດຂໍ້ຜິດພາດ",
+                              );
+                            },
+                          );
+                        }
+                      } else {
+                        StaffModel? staffModel = await createStaffService(
+                          name: _nameController.text,
+                          lastName: _lastNameController.text,
+                          phoneNumber: _phoneNumberController.text,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          gender: _gender,
+                          birthDate: _birthDateController.text,
+                          address: _addressController.text,
+                          role: _role,
+                        );
+                        Navigator.of(_loadingKey.currentContext!,
+                                rootNavigator: true)
+                            .pop();
+                        if (staffModel != null) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SuccessDialogWidget(
+                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                              );
+                            },
+                          );
+                          setState(() {
+                            _nameController.clear();
+                            _lastNameController.clear();
+                            _emailController.clear();
+                            _phoneNumberController.clear();
+                            _addressController.clear();
+                            _passwordController.clear();
+                            _birthDateController.clear();
+                            _croppedFile == null;
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ErrorDialogWidget(
+                                detail: "ເກີດຂໍ້ຜິດພາດ",
+                              );
+                            },
+                          );
+                        }
+                      }
+                    }
                   },
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
                   child: Row(
