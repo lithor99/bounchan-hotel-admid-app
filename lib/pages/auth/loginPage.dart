@@ -2,6 +2,7 @@ import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
 import 'package:bounchan_hotel_admin_app/models/loginModel.dart';
+import 'package:bounchan_hotel_admin_app/pages/auth/forgotPasswordEmailPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/home/homePage.dart';
 import 'package:bounchan_hotel_admin_app/services/staffService.dart';
 import 'package:bounchan_hotel_admin_app/utils/storageManager.dart';
@@ -283,6 +284,30 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                ForgotPasswordEmailPage()));
+                                  },
+                                  child: Text(
+                                    "ລືມລະຫັດຜ່ານ",
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: ColorConstants.primary,
+                                        decorationThickness: 2.0,
+                                        color: ColorConstants.primary,
+                                        fontSize: FontSizes.s14,
+                                        fontFamily: FontConstants.fontFamilay),
+                                  )),
+                            ],
+                          ),
+                          // SizedBox(height: 20),
                         ],
                       ),
                     ),

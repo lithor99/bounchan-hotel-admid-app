@@ -37,8 +37,8 @@ Future<String> createRoomService(
 }
 
 //get rooms
-Future<RoomsModel?> getRoomsService() async {
-  String url = "${BASE_URL}/room";
+Future<RoomsModel?> getRoomsService({String? search}) async {
+  String url = "${BASE_URL}/room?search=$search";
   try {
     var response = await http.get(
       Uri.parse(url),

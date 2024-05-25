@@ -16,16 +16,18 @@ class RoomPage extends StatefulWidget {
 
 class _RoomPageState extends State<RoomPage> {
   RoomsModel? _roomsModel;
+  final _searchController = TextEditingController();
+  bool _isSearching = false;
 
-  Future getRooms() async {
-    _roomsModel = await getRoomsService();
+  Future getRooms({String? search}) async {
+    _roomsModel = await getRoomsService(search: search);
     setState(() {});
   }
 
   @override
   void initState() {
     super.initState();
-    getRooms();
+    getRooms(search: "");
   }
 
   @override
@@ -33,7 +35,84 @@ class _RoomPageState extends State<RoomPage> {
     return Scaffold(
       backgroundColor: ColorConstants.black,
       appBar: AppBar(
-        title: Text("ຂໍ້ມູນຫ້ອງ"),
+        leading: IconButton(
+            onPressed: () {
+              if (_isSearching) {
+                FocusScope.of(context).unfocus();
+                getRooms(search: "");
+                setState(() {
+                  _searchController.clear();
+                  _isSearching = false;
+                });
+              } else {
+                Navigator.pop(context);
+              }
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: ColorConstants.black,
+            )),
+        title: _isSearching
+            ? Padding(
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 0),
+                child: TextFormField(
+                  onChanged: (value) {
+                    if (value.isEmpty || value == "") {
+                      _searchController.clear();
+                      getRooms(search: _searchController.text);
+                    }
+                  },
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide:
+                            BorderSide(width: 0.5, color: ColorConstants.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide:
+                            BorderSide(width: 1, color: ColorConstants.white),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(6),
+                        borderSide:
+                            BorderSide(width: 0.5, color: ColorConstants.white),
+                      ),
+                      hintText: "ຄົ້ນຫາ",
+                      hintStyle: getBoldStyle(color: ColorConstants.darkGrey),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                      fillColor: ColorConstants.white,
+                      filled: true),
+                  style: getBoldStyle(color: ColorConstants.black),
+                ),
+              )
+            : Text("ຂໍ້ມູນຫ້ອງ"),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              onPressed: () {
+                if (_isSearching) {
+                  FocusScope.of(context).unfocus();
+                  getRooms(search: _searchController.text);
+                } else {
+                  setState(() {
+                    _searchController.clear();
+                    _isSearching = true;
+                  });
+                }
+              },
+              icon: Icon(
+                Icons.search_outlined,
+                size: 30,
+                color: ColorConstants.black,
+              ),
+            ),
+          ),
+        ],
       ),
       body: _roomsModel == null
           ? Center(
@@ -65,7 +144,7 @@ class _RoomPageState extends State<RoomPage> {
                               MaterialPageRoute(
                                   builder: (context) => RoomDetailPage(
                                       id: _roomsModel!.result![i].id!)),
-                            ).then((value) => getRooms());
+                            ).then((value) => getRooms(search: ""));
                           },
                           child: Container(
                             child: Column(

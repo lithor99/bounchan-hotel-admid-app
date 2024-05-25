@@ -129,8 +129,8 @@ Future<UploadModel?> uploadFileService({required File file}) async {
 }
 
 //get all staff
-Future<StaffsModel?> getStaffsService() async {
-  String url = "${BASE_URL}/staff";
+Future<StaffsModel?> getStaffsService({String? search}) async {
+  String url = "${BASE_URL}/staff?search=$search";
   try {
     var response = await http.get(
       Uri.parse(url),
@@ -164,6 +164,26 @@ Future<StaffModel?> getStaffByIdService({required String id}) async {
     } else {
       print("Error: ${response.statusCode}");
       return null;
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+//check email
+Future<String> checkEmailService({required String email}) async {
+  String url = "${BASE_URL}/staff/check/email/$email";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      return "no";
+    } else {
+      return "yes";
     }
   } catch (e) {
     rethrow;
@@ -267,6 +287,35 @@ Future<String> changePasswordService({
       return "success";
     } else if (response.statusCode == 202) {
       return "incorrect";
+    } else {
+      print("Error: ${response.statusCode}");
+      return "failed";
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+//reset password
+Future<String> resetPasswordService({
+  required String email,
+  required String newPassword,
+}) async {
+  String url = "${BASE_URL}/staff/reset/password";
+  Map body = {
+    "email": email,
+    "newPassword": newPassword,
+  };
+  try {
+    var response = await http.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      return "success";
     } else {
       print("Error: ${response.statusCode}");
       return "failed";

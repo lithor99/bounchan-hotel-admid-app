@@ -14,6 +14,7 @@ import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
 import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -410,6 +411,10 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                           }
                           return null;
                         },
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                       ),
                       SizedBox(height: 15),
                       Text(

@@ -324,6 +324,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                       TextFormField(
                         controller: _emailController,
+                        readOnly: true,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(6),
@@ -455,6 +456,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       LoadingDialogWidget.showLoading(context, _loadingKey);
+
                       if (_croppedFile != null) {
                         UploadModel? uploadModel = await uploadFileService(
                             file: File(_croppedFile!.path));

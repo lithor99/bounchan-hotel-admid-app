@@ -499,99 +499,115 @@ class _StaffAddPageState extends State<StaffAddPage> {
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       LoadingDialogWidget.showLoading(context, _loadingKey);
-                      if (_croppedFile != null) {
-                        UploadModel? uploadModel = await uploadFileService(
-                            file: File(_croppedFile!.path));
-                        if (uploadModel!.url != null) {
-                          _image = uploadModel.url;
-                        }
-                        StaffModel? staffModel = await createStaffService(
-                          name: _nameController.text,
-                          lastName: _lastNameController.text,
-                          phoneNumber: _phoneNumberController.text,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          gender: _gender,
-                          image: _image!,
-                          birthDate: _birthDateController.text,
-                          address: _addressController.text,
-                          role: _role,
-                        );
+                      String checkEmail =
+                          await checkEmailService(email: _emailController.text);
+                      if (checkEmail == "no") {
                         Navigator.of(_loadingKey.currentContext!,
                                 rootNavigator: true)
                             .pop();
-                        if (staffModel != null) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SuccessDialogWidget(
-                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
-                              );
-                            },
-                          );
-                          setState(() {
-                            _nameController.clear();
-                            _lastNameController.clear();
-                            _emailController.clear();
-                            _phoneNumberController.clear();
-                            _addressController.clear();
-                            _passwordController.clear();
-                            _birthDateController.clear();
-                            _croppedFile == null;
-                          });
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ErrorDialogWidget(
-                                detail: "ເກີດຂໍ້ຜິດພາດ",
-                              );
-                            },
-                          );
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ອີເມລນີ້ມີຢູ່ແລ້ວ",
+                            );
+                          },
+                        );
                       } else {
-                        StaffModel? staffModel = await createStaffService(
-                          name: _nameController.text,
-                          lastName: _lastNameController.text,
-                          phoneNumber: _phoneNumberController.text,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          gender: _gender,
-                          birthDate: _birthDateController.text,
-                          address: _addressController.text,
-                          role: _role,
-                        );
-                        Navigator.of(_loadingKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        if (staffModel != null) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SuccessDialogWidget(
-                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
-                              );
-                            },
+                        if (_croppedFile != null) {
+                          UploadModel? uploadModel = await uploadFileService(
+                              file: File(_croppedFile!.path));
+                          if (uploadModel!.url != null) {
+                            _image = uploadModel.url;
+                          }
+                          StaffModel? staffModel = await createStaffService(
+                            name: _nameController.text,
+                            lastName: _lastNameController.text,
+                            phoneNumber: _phoneNumberController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            gender: _gender,
+                            image: _image!,
+                            birthDate: _birthDateController.text,
+                            address: _addressController.text,
+                            role: _role,
                           );
-                          setState(() {
-                            _nameController.clear();
-                            _lastNameController.clear();
-                            _emailController.clear();
-                            _phoneNumberController.clear();
-                            _addressController.clear();
-                            _passwordController.clear();
-                            _birthDateController.clear();
-                            _croppedFile == null;
-                          });
+                          Navigator.of(_loadingKey.currentContext!,
+                                  rootNavigator: true)
+                              .pop();
+                          if (staffModel != null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SuccessDialogWidget(
+                                  detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                                );
+                              },
+                            );
+                            setState(() {
+                              _nameController.clear();
+                              _lastNameController.clear();
+                              _emailController.clear();
+                              _phoneNumberController.clear();
+                              _addressController.clear();
+                              _passwordController.clear();
+                              _birthDateController.clear();
+                              _croppedFile == null;
+                            });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ErrorDialogWidget(
+                                  detail: "ເກີດຂໍ້ຜິດພາດ",
+                                );
+                              },
+                            );
+                          }
                         } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ErrorDialogWidget(
-                                detail: "ເກີດຂໍ້ຜິດພາດ",
-                              );
-                            },
+                          StaffModel? staffModel = await createStaffService(
+                            name: _nameController.text,
+                            lastName: _lastNameController.text,
+                            phoneNumber: _phoneNumberController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                            gender: _gender,
+                            birthDate: _birthDateController.text,
+                            address: _addressController.text,
+                            role: _role,
                           );
+                          Navigator.of(_loadingKey.currentContext!,
+                                  rootNavigator: true)
+                              .pop();
+                          if (staffModel != null) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return SuccessDialogWidget(
+                                  detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                                );
+                              },
+                            );
+                            setState(() {
+                              _nameController.clear();
+                              _lastNameController.clear();
+                              _emailController.clear();
+                              _phoneNumberController.clear();
+                              _addressController.clear();
+                              _passwordController.clear();
+                              _birthDateController.clear();
+                              _croppedFile == null;
+                            });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ErrorDialogWidget(
+                                  detail: "ເກີດຂໍ້ຜິດພາດ",
+                                );
+                              },
+                            );
+                          }
                         }
                       }
                     }

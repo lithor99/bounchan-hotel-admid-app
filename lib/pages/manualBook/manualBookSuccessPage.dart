@@ -7,6 +7,7 @@ import 'package:bounchan_hotel_admin_app/pages/home/homePage.dart';
 import 'package:bounchan_hotel_admin_app/services/bookService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ManualBookSuccessPage extends StatefulWidget {
   const ManualBookSuccessPage({super.key, required this.bookResponseModel});
@@ -196,16 +197,18 @@ class _ManualBookSuccessPageState extends State<ManualBookSuccessPage> {
                                 color: ColorConstants.danger)),
                       ],
                     ),
-                    // Container(
-                    //   decoration: BoxDecoration(
-                    //       border: Border.all(width: 3, color: ColorConstants.success),
-                    //       borderRadius: BorderRadius.circular(6)),
-                    //   child: QrImageView(
-                    //     data: '1234567890',
-                    //     version: QrVersions.auto,
-                    //     size: 200.0,
-                    //   ),
-                    // )
+                    SizedBox(height: 20),
+                    Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              width: 3, color: ColorConstants.success),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: QrImageView(
+                        data: _bookModel!.result!.id!,
+                        version: QrVersions.auto,
+                        size: 260.0,
+                      ),
+                    )
                   ],
                 ),
               ),

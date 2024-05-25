@@ -6,7 +6,6 @@ import 'package:bounchan_hotel_admin_app/models/membersModel.dart';
 import 'package:bounchan_hotel_admin_app/models/reportBookModel.dart';
 import 'package:bounchan_hotel_admin_app/models/reportIncomeModel.dart';
 import 'package:bounchan_hotel_admin_app/services/reportService.dart';
-import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
 import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +24,6 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage>
     with SingleTickerProviderStateMixin {
-  final _loadingKey = GlobalKey<State>();
   TabController? _tabController;
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
