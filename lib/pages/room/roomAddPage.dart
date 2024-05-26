@@ -228,8 +228,8 @@ class _RoomAddPageState extends State<RoomAddPage> {
                       return null;
                     }
                   },
-                  items: <String>['ຕຽງດ່ຽວ', 'ຕຽງຄູ່']
-                      .map<DropdownMenuItem<String>>((String? value) {
+                  items:
+                      _roomTypes.map<DropdownMenuItem<String>>((String? value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(

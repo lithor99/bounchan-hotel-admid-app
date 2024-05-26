@@ -34,9 +34,12 @@ Future<MembersModel?> reportMemberService({
 Future<ReportBookModel?> reportBookService({
   required String startDate,
   required String endDate,
+  String? status,
 }) async {
   String url = "${BASE_URL}/report-book?startDate=$startDate&endDate=$endDate";
   try {
+    if (status != null && status != "") url += "&status=$status";
+    print("url----------->: $url ");
     var response = await http.get(
       Uri.parse(url),
       headers: {
