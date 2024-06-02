@@ -11,8 +11,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ManualBookDetailPage extends StatelessWidget {
-  const ManualBookDetailPage({super.key, required this.bookBodyModel});
+  const ManualBookDetailPage(
+      {super.key, required this.bookBodyModel, required this.totalBookDays});
   final BookBodyModel bookBodyModel;
+  final int totalBookDays;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +66,9 @@ class ManualBookDetailPage extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(height: 10),
+                Text("ຈຳນວນ: $totalBookDays ວັນ",
+                    style: getBoldStyle(fontSize: FontSizes.s18)),
                 SizedBox(height: 10),
                 DataTable(
                   border: TableBorder.all(

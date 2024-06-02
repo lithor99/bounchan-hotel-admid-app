@@ -196,8 +196,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        "$_name\n$_email\n$_phoneNumber",
-                        style: getBoldStyle(
+                        "${_name!.length > 15 ? _name!.substring(0, 15) + '...' : _name}\n${_email!.length > 15 ? _email!.substring(0, 3) + '...' + _email!.split("@")[0].substring(_email!.split("@")[0].length - 2, _email!.split("@")[0].length) + '@' + _email!.split("@")[1] : _email}\n$_phoneNumber",
+                        style: getRegularStyle(
                             fontSize: FontSizes.s14,
                             color: ColorConstants.primary),
                       )

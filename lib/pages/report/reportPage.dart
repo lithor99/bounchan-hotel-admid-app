@@ -33,6 +33,25 @@ class _ReportPageState extends State<ReportPage>
   ReportBookModel? _bookModel;
   MembersModel? _membersModel;
   int _pageIndex = 0;
+  String? _selectedStatus = "ທັງໝົດ";
+  String _selectedStatusValue = "";
+  int _totalIncome = 0;
+  int _totalBook = 0;
+
+  List<String> _statusNames = [
+    "ທັງໝົດ",
+    "ລໍຖ້າແຈ້ງເຂົ້າ",
+    "ລໍຖ້າແຈ້ງອອກ",
+    "ແຈ້ງອອກແລ້ວ",
+    "ຍົກເລີກການຈອງ",
+  ];
+  List<String> _statusValues = [
+    "",
+    "1",
+    "2",
+    "3",
+    "4",
+  ];
 
   Future getReportIncome({
     required String startDate,
@@ -40,14 +59,23 @@ class _ReportPageState extends State<ReportPage>
   }) async {
     _incomeModel =
         await reportIncomeService(startDate: startDate, endDate: endDate);
+    _totalIncome = 0;
+    for (var i in _incomeModel!.result!) {
+      _totalIncome += int.parse(i.amount!);
+    }
   }
 
   Future getReportBook({
     required String startDate,
     required String endDate,
+    String? status,
   }) async {
-    _bookModel =
-        await reportBookService(startDate: startDate, endDate: endDate);
+    _bookModel = await reportBookService(
+        startDate: startDate, endDate: endDate, status: status);
+    _totalBook = 0;
+    for (var i in _bookModel!.result!.rows!) {
+      _totalBook += i.amount ?? 0;
+    }
   }
 
   Future getReportMember({
@@ -61,13 +89,21 @@ class _ReportPageState extends State<ReportPage>
   Future searchData({
     required String startDate,
     required String endDate,
+    required String status,
   }) async {
     await getReportIncome(
         startDate: _startDateController.text, endDate: _endDateController.text);
     await getReportBook(
-        startDate: _startDateController.text, endDate: _endDateController.text);
+        startDate: _startDateController.text,
+        endDate: DateTime.parse(_endDateController.text)
+            .add(Duration(days: 1))
+            .toString(),
+        status: _selectedStatusValue);
     await getReportMember(
-        startDate: _startDateController.text, endDate: _endDateController.text);
+        startDate: _startDateController.text,
+        endDate: DateTime.parse(_endDateController.text)
+            .add(Duration(days: 1))
+            .toString());
     setState(() {});
   }
 
@@ -83,10 +119,13 @@ class _ReportPageState extends State<ReportPage>
         _selectedStartDate = picked;
         _startDateController.text =
             DateFormat('yyyy-MM-dd').format(_selectedStartDate!);
-        if (_selectedStartDate!.isAfter(DateTime(
-            int.parse(_endDateController.text.substring(0, 4)),
-            int.parse(_endDateController.text.substring(5, 7)),
-            int.parse(_endDateController.text.substring(8, 10))))) {
+        if (_selectedStartDate!
+                .difference(DateTime(
+                    int.parse(_endDateController.text.substring(0, 4)),
+                    int.parse(_endDateController.text.substring(5, 7)),
+                    int.parse(_endDateController.text.substring(8, 10))))
+                .inDays >=
+            0) {
           _selectedEndDate = _selectedStartDate!.add(Duration(days: 1));
           _endDateController.text =
               DateFormat('yyyy-MM-dd').format(_selectedEndDate!);
@@ -107,10 +146,13 @@ class _ReportPageState extends State<ReportPage>
         _selectedEndDate = picked;
         _endDateController.text =
             DateFormat('yyyy-MM-dd').format(_selectedEndDate!);
-        if (_selectedEndDate!.isBefore(DateTime(
-            int.parse(_startDateController.text.substring(0, 4)),
-            int.parse(_startDateController.text.substring(5, 7)),
-            int.parse(_startDateController.text.substring(8, 10))))) {
+        if (_selectedEndDate!
+                .difference(DateTime(
+                    int.parse(_startDateController.text.substring(0, 4)),
+                    int.parse(_startDateController.text.substring(5, 7)),
+                    int.parse(_startDateController.text.substring(8, 10))))
+                .inDays <
+            1) {
           _selectedStartDate = _selectedEndDate!.add(Duration(days: -1));
           _startDateController.text =
               DateFormat('yyyy-MM-dd').format(_selectedStartDate!);
@@ -136,7 +178,9 @@ class _ReportPageState extends State<ReportPage>
       });
     }
     await searchData(
-        startDate: _startDateController.text, endDate: _endDateController.text);
+        startDate: _startDateController.text,
+        endDate: _endDateController.text,
+        status: _selectedStatusValue);
   }
 
   Future exportIncome() async {
@@ -193,6 +237,22 @@ class _ReportPageState extends State<ReportPage>
                     ]
                   ],
                 ),
+              pw.TableHelper.fromTextArray(
+                columnWidths: {
+                  0: pw.FlexColumnWidth(4),
+                  1: pw.FlexColumnWidth(4),
+                },
+                cellAlignments: {
+                  0: pw.Alignment.centerRight,
+                  1: pw.Alignment.centerLeft,
+                },
+                data: [
+                  [
+                    'ລວມທັງໝົດ',
+                    '${NumberFormat("#,### ກີບ").format(_totalIncome)}'
+                  ],
+                ],
+              ),
             ],
           ),
         ),
@@ -266,6 +326,22 @@ class _ReportPageState extends State<ReportPage>
                     ]
                   ],
                 ),
+              pw.TableHelper.fromTextArray(
+                columnWidths: {
+                  0: pw.FlexColumnWidth(5),
+                  1: pw.FlexColumnWidth(5),
+                },
+                cellAlignments: {
+                  0: pw.Alignment.centerRight,
+                  1: pw.Alignment.centerLeft,
+                },
+                data: [
+                  [
+                    'ລວມທັງໝົດ',
+                    '${NumberFormat("#,### ກີບ").format(_totalBook)}'
+                  ],
+                ],
+              ),
             ],
           ),
         ),
@@ -536,7 +612,8 @@ class _ReportPageState extends State<ReportPage>
                         onTap: () async {
                           await searchData(
                               startDate: _startDateController.text,
-                              endDate: _endDateController.text);
+                              endDate: _endDateController.text,
+                              status: _selectedStatusValue);
                         },
                         splashColor: ColorConstants.primary,
                         borderRadius: BorderRadius.circular(7),
@@ -583,15 +660,318 @@ class _ReportPageState extends State<ReportPage>
                               scrollDirection: Axis.horizontal,
                               child: Padding(
                                 padding: EdgeInsets.only(bottom: 10),
-                                child: DataTable(
+                                child: Column(
+                                  children: [
+                                    DataTable(
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              top: BorderSide(
+                                                  width: 1,
+                                                  color: ColorConstants
+                                                      .lightGrey))),
+                                      columnSpacing: 30,
+                                      showBottomBorder: true,
+                                      columns: <DataColumn>[
+                                        DataColumn(
+                                            label: Text(
+                                              'ລຳດັບ',
+                                              style: getRegularStyle(
+                                                  color:
+                                                      ColorConstants.lightGrey),
+                                            ),
+                                            numeric: true),
+                                        DataColumn(
+                                            label: Text(
+                                              'ຈຳນວນໃບບິນ',
+                                              style: getRegularStyle(
+                                                  color:
+                                                      ColorConstants.lightGrey),
+                                            ),
+                                            numeric: true),
+                                        DataColumn(
+                                            label: Text(
+                                              'ຈຳນວນເງິນ',
+                                              style: getRegularStyle(
+                                                  color:
+                                                      ColorConstants.lightGrey),
+                                            ),
+                                            numeric: true),
+                                        DataColumn(
+                                            label: Text(
+                                          'ວັນທີ',
+                                          style: getRegularStyle(
+                                              color: ColorConstants.lightGrey),
+                                        )),
+                                      ],
+                                      rows: <DataRow>[
+                                        for (int i = 0;
+                                            i < _incomeModel!.result!.length;
+                                            i++)
+                                          DataRow(
+                                            cells: <DataCell>[
+                                              DataCell(Text('${i + 1}',
+                                                  style: getRegularStyle(
+                                                      color: ColorConstants
+                                                          .white))),
+                                              DataCell(Text(
+                                                  '${_incomeModel!.result![i].count ?? ""}',
+                                                  style: getRegularStyle(
+                                                      color: ColorConstants
+                                                          .white))),
+                                              DataCell(Text(
+                                                  '${NumberFormat("#,### ກີບ").format(int.parse(_incomeModel!.result![i].amount ?? "0"))}',
+                                                  style: getRegularStyle(
+                                                      color: ColorConstants
+                                                          .white))),
+                                              DataCell(Text(
+                                                  '${_incomeModel!.result![i].date ?? ""}',
+                                                  style: getRegularStyle(
+                                                      color: ColorConstants
+                                                          .white))),
+                                            ],
+                                          )
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "ລວມທັງໝົດ: ${NumberFormat("#,### ກີບ").format(_totalIncome)}",
+                                      style:
+                                          getBoldStyle(fontSize: FontSizes.s20),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+            ],
+          ),
+          Column(
+            children: [
+              SafeArea(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2 - 30,
+                        child: TextFormField(
+                          controller: _startDateController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 0.5, color: ColorConstants.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 1, color: ColorConstants.primary),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 0.5, color: ColorConstants.white),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.date_range,
+                                  color: ColorConstants.primary),
+                              onPressed: () {
+                                selectStartDate(context);
+                              },
+                            ),
+                          ),
+                          style: getRegularStyle(color: ColorConstants.white),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                        child: Text(
+                          "ຫາ",
+                          style: getRegularStyle(color: ColorConstants.white),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width / 2 - 30,
+                        child: TextFormField(
+                          controller: _endDateController,
+                          readOnly: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 0.5, color: ColorConstants.white),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 1, color: ColorConstants.primary),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(6),
+                              borderSide: BorderSide(
+                                  width: 0.5, color: ColorConstants.white),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                            suffixIcon: IconButton(
+                              icon: Icon(Icons.date_range,
+                                  color: ColorConstants.primary),
+                              onPressed: () {
+                                selectEndDate(context);
+                              },
+                            ),
+                          ),
+                          style: getRegularStyle(color: ColorConstants.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width - 90,
+                      child: DropdownButtonFormField(
+                        decoration: InputDecoration(
+                          fillColor: ColorConstants.primary,
+                          filled: true,
+                          contentPadding:
+                              const EdgeInsets.only(right: 10, left: 10),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: ColorConstants.lightGrey, width: 1.0),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.0),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ColorConstants.lightGrey),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.0),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ColorConstants.lightGrey),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.0),
+                            ),
+                          ),
+                          errorStyle:
+                              getRegularStyle(color: ColorConstants.danger),
+                          errorBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: ColorConstants.danger),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.0),
+                            ),
+                          ),
+                        ),
+                        elevation: 0,
+                        isExpanded: true,
+                        style: getRegularStyle(color: ColorConstants.black),
+                        dropdownColor: ColorConstants.white,
+                        iconSize: 30,
+                        iconEnabledColor: ColorConstants.black,
+                        icon: const Icon(
+                          Icons.arrow_drop_down_sharp,
+                          size: 20,
+                        ),
+                        value: _selectedStatus,
+                        items: _statusNames
+                            .map<DropdownMenuItem<String>>((String? value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value!,
+                              style:
+                                  getRegularStyle(color: ColorConstants.black),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (String? _value) {
+                          setState(() {
+                            _selectedStatus = _value;
+                            _selectedStatusValue = _statusValues[
+                                _statusNames.indexOf(_selectedStatus!)];
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    InkWell(
+                      onTap: () async {
+                        await searchData(
+                          startDate: _startDateController.text,
+                          endDate: _endDateController.text,
+                          status: _selectedStatusValue,
+                        );
+                      },
+                      splashColor: ColorConstants.primary,
+                      borderRadius: BorderRadius.circular(7),
+                      child: Container(
+                        padding: EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                            color: ColorConstants.black,
+                            border: Border.all(
+                                color: ColorConstants.primary, width: 1),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Icon(
+                          Icons.search_rounded,
+                          color: ColorConstants.primary,
+                          size: 30,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(height: 5),
+              _bookModel == null
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: ColorConstants.black,
+                        backgroundColor: ColorConstants.primary,
+                      ),
+                    )
+                  : _bookModel!.result!.rows!.isEmpty
+                      ? SizedBox(
+                          height: 200,
+                          child: Center(
+                            child: Text(
+                              "ບໍ່ມີຂໍ້ມູນ",
+                              style: getBoldStyle(fontSize: FontSizes.s20),
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Column(
+                                children: [
+                                  DataTable(
                                     decoration: BoxDecoration(
                                         border: Border(
                                             top: BorderSide(
                                                 width: 1,
                                                 color:
                                                     ColorConstants.lightGrey))),
-                                    columnSpacing: 30,
                                     showBottomBorder: true,
+                                    columnSpacing: 30,
                                     columns: <DataColumn>[
                                       DataColumn(
                                           label: Text(
@@ -603,7 +983,7 @@ class _ReportPageState extends State<ReportPage>
                                           numeric: true),
                                       DataColumn(
                                           label: Text(
-                                            'ຈຳນວນໃບບິນ',
+                                            'ຈຳນວນຫ້ອງ',
                                             style: getRegularStyle(
                                                 color:
                                                     ColorConstants.lightGrey),
@@ -623,10 +1003,17 @@ class _ReportPageState extends State<ReportPage>
                                         style: getRegularStyle(
                                             color: ColorConstants.lightGrey),
                                       )),
+                                      DataColumn(
+                                        label: Text(
+                                          'ສະຖານະ',
+                                          style: getRegularStyle(
+                                              color: ColorConstants.lightGrey),
+                                        ),
+                                      ),
                                     ],
                                     rows: <DataRow>[
                                       for (int i = 0;
-                                          i < _incomeModel!.result!.length;
+                                          i < _bookModel!.result!.rows!.length;
                                           i++)
                                         DataRow(
                                           cells: <DataCell>[
@@ -635,23 +1022,36 @@ class _ReportPageState extends State<ReportPage>
                                                     color:
                                                         ColorConstants.white))),
                                             DataCell(Text(
-                                                '${_incomeModel!.result![i].count ?? ""}',
+                                                '${_bookModel!.result!.rows![i].bookDetails!.length}',
                                                 style: getRegularStyle(
                                                     color:
                                                         ColorConstants.white))),
                                             DataCell(Text(
-                                                '${NumberFormat("#,### ກີບ").format(int.parse(_incomeModel!.result![i].amount ?? "0"))}',
+                                                '${NumberFormat("#,###.00").format(_bookModel!.result!.rows![i].amount ?? 0)}',
                                                 style: getRegularStyle(
                                                     color:
                                                         ColorConstants.white))),
                                             DataCell(Text(
-                                                '${_incomeModel!.result![i].date ?? ""}',
+                                                '${_bookModel!.result!.rows![i].createdAt!.substring(0, 10)}',
+                                                style: getRegularStyle(
+                                                    color:
+                                                        ColorConstants.white))),
+                                            DataCell(Text(
+                                                '${_bookModel!.result!.rows![i].status == 1 ? "ລໍຖ້າແຈ້ງເຂົ້າ" : _bookModel!.result!.rows![i].status == 2 ? "ລໍຖ້າແຈ້ງອອກ" : _bookModel!.result!.rows![i].status == 3 ? "ແຈ້ງອອກແລ້ວ" : "ຍົກເລີກການຈອງ"}',
                                                 style: getRegularStyle(
                                                     color:
                                                         ColorConstants.white))),
                                           ],
                                         )
-                                    ]),
+                                    ],
+                                  ),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "ລວມທັງໝົດ: ${NumberFormat("#,### ກີບ").format(_totalBook)}",
+                                    style:
+                                        getBoldStyle(fontSize: FontSizes.s20),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
@@ -747,224 +1147,8 @@ class _ReportPageState extends State<ReportPage>
                         onTap: () async {
                           await searchData(
                               startDate: _startDateController.text,
-                              endDate: _endDateController.text);
-                        },
-                        splashColor: ColorConstants.primary,
-                        borderRadius: BorderRadius.circular(7),
-                        child: Container(
-                          padding: EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                              color: ColorConstants.black,
-                              border: Border.all(
-                                  color: ColorConstants.primary, width: 1),
-                              borderRadius: BorderRadius.circular(6)),
-                          child: Icon(
-                            Icons.search_rounded,
-                            color: ColorConstants.primary,
-                            size: 30,
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: 5),
-              _bookModel == null
-                  ? Center(
-                      child: CircularProgressIndicator(
-                        color: ColorConstants.black,
-                        backgroundColor: ColorConstants.primary,
-                      ),
-                    )
-                  : _bookModel!.result!.rows!.isEmpty
-                      ? SizedBox(
-                          height: 200,
-                          child: Center(
-                            child: Text(
-                              "ບໍ່ມີຂໍ້ມູນ",
-                              style: getBoldStyle(fontSize: FontSizes.s20),
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.vertical,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: DataTable(
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          top: BorderSide(
-                                              width: 1,
-                                              color:
-                                                  ColorConstants.lightGrey))),
-                                  showBottomBorder: true,
-                                  columnSpacing: 30,
-                                  columns: <DataColumn>[
-                                    DataColumn(
-                                        label: Text(
-                                          'ລຳດັບ',
-                                          style: getRegularStyle(
-                                              color: ColorConstants.lightGrey),
-                                        ),
-                                        numeric: true),
-                                    DataColumn(
-                                        label: Text(
-                                          'ຈຳນວນຫ້ອງ',
-                                          style: getRegularStyle(
-                                              color: ColorConstants.lightGrey),
-                                        ),
-                                        numeric: true),
-                                    DataColumn(
-                                        label: Text(
-                                          'ຈຳນວນເງິນ',
-                                          style: getRegularStyle(
-                                              color: ColorConstants.lightGrey),
-                                        ),
-                                        numeric: true),
-                                    DataColumn(
-                                        label: Text(
-                                      'ວັນທີ',
-                                      style: getRegularStyle(
-                                          color: ColorConstants.lightGrey),
-                                    )),
-                                    DataColumn(
-                                      label: Text(
-                                        'ສະຖານະ',
-                                        style: getRegularStyle(
-                                            color: ColorConstants.lightGrey),
-                                      ),
-                                    ),
-                                  ],
-                                  rows: <DataRow>[
-                                    for (int i = 0;
-                                        i < _bookModel!.result!.rows!.length;
-                                        i++)
-                                      DataRow(
-                                        cells: <DataCell>[
-                                          DataCell(Text('${i + 1}',
-                                              style: getRegularStyle(
-                                                  color:
-                                                      ColorConstants.white))),
-                                          DataCell(Text(
-                                              '${_bookModel!.result!.rows![i].bookDetails!.length}',
-                                              style: getRegularStyle(
-                                                  color:
-                                                      ColorConstants.white))),
-                                          DataCell(Text(
-                                              '${NumberFormat("#,###.00").format(_bookModel!.result!.rows![i].amount ?? 0)}',
-                                              style: getRegularStyle(
-                                                  color:
-                                                      ColorConstants.white))),
-                                          DataCell(Text(
-                                              '${_bookModel!.result!.rows![i].createdAt!.substring(0, 10)}',
-                                              style: getRegularStyle(
-                                                  color:
-                                                      ColorConstants.white))),
-                                          DataCell(Text(
-                                              '${_bookModel!.result!.rows![i].status == 1 ? "ລໍຖ້າແຈ້ງເຂົ້າ" : _bookModel!.result!.rows![i].status == 2 ? "ລໍຖ້າແຈ້ງອອກ" : _bookModel!.result!.rows![i].status == 3 ? "ແຈ້ງອອກແລ້ວ" : "ຍົກເລີກການຈອງ"}',
-                                              style: getRegularStyle(
-                                                  color:
-                                                      ColorConstants.white))),
-                                        ],
-                                      )
-                                  ]),
-                            ),
-                          ),
-                        ),
-            ],
-          ),
-          Column(
-            children: [
-              SafeArea(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2 - 60,
-                        child: TextFormField(
-                          controller: _startDateController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 0.5, color: ColorConstants.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 1, color: ColorConstants.primary),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 0.5, color: ColorConstants.white),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.date_range,
-                                  color: ColorConstants.primary),
-                              onPressed: () {
-                                selectStartDate(context);
-                              },
-                            ),
-                          ),
-                          style: getRegularStyle(color: ColorConstants.white),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Text(
-                          "ຫາ",
-                          style: getRegularStyle(color: ColorConstants.white),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width / 2 - 60,
-                        child: TextFormField(
-                          controller: _endDateController,
-                          readOnly: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 0.5, color: ColorConstants.white),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 1, color: ColorConstants.primary),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(6),
-                              borderSide: BorderSide(
-                                  width: 0.5, color: ColorConstants.white),
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.date_range,
-                                  color: ColorConstants.primary),
-                              onPressed: () {
-                                selectEndDate(context);
-                              },
-                            ),
-                          ),
-                          style: getRegularStyle(color: ColorConstants.white),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      InkWell(
-                        onTap: () async {
-                          await searchData(
-                              startDate: _startDateController.text,
-                              endDate: _endDateController.text);
+                              endDate: _endDateController.text,
+                              status: _selectedStatusValue);
                         },
                         splashColor: ColorConstants.primary,
                         borderRadius: BorderRadius.circular(7),

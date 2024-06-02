@@ -83,7 +83,6 @@ class _HistoryBookPageState extends State<HistoryBookPage> {
         title: Text("ປະຫວັດການຈອງ"),
       ),
       body: SingleChildScrollView(
-        physics: NeverScrollableScrollPhysics(),
         child: Padding(
           padding: EdgeInsets.all(10),
           child: Column(
@@ -319,6 +318,7 @@ class _HistoryBookPageState extends State<HistoryBookPage> {
                       : ListView.builder(
                           itemCount: _booksModel!.result!.rows!.length,
                           shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             return InkWell(
                               onTap: () {

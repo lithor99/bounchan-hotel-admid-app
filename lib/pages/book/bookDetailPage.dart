@@ -256,7 +256,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                                 children: [
                                   TextSpan(
                                       text:
-                                          "${_bookModel!.result!.createdAt!.substring(0, 10)}",
+                                          "${DateTime.parse(_bookModel!.result!.createdAt!).toLocal().toString().substring(0, 10)}  ${DateTime.parse(_bookModel!.result!.createdAt!).toLocal().toString().substring(11, 19)}",
                                       style: getRegularStyle(
                                         color: ColorConstants.white,
                                         fontSize: FontSizes.s16,
