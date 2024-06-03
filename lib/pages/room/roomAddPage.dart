@@ -403,6 +403,7 @@ class _RoomAddPageState extends State<RoomAddPage> {
                         String result = await createRoomService(
                             roomNo: _roomNoController.text,
                             price: _priceController.text,
+                            description: _roomDetailController.text,
                             roomTypeId: _roomTypeId!,
                             images: _imageUrls);
                         Navigator.of(_loadingKey.currentContext!,
@@ -438,6 +439,7 @@ class _RoomAddPageState extends State<RoomAddPage> {
                             roomNo: _roomNoController.text,
                             price: _priceController.text,
                             roomTypeId: _roomTypeId!,
+                            description: _roomDetailController.text,
                             images: _imageUrls);
                         Navigator.of(_loadingKey.currentContext!,
                                 rootNavigator: true)

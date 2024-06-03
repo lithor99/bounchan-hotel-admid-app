@@ -144,7 +144,7 @@ class _MemberPageState extends State<MemberPage> {
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 10),
-                          width: double.infinity,
+                          // width: double.infinity,
                           decoration: BoxDecoration(
                               border: Border(
                                   top: index == 0
@@ -192,8 +192,7 @@ class _MemberPageState extends State<MemberPage> {
                                 children: [
                                   Text(
                                     "${_membersModel!.result!.rows![index].gender == "ຊາຍ" ? "ທ້າວ" : "ນາງ"} "
-                                    "${_membersModel!.result!.rows![index].name} "
-                                    "${_membersModel!.result!.rows![index].lastName}",
+                                    "${(_membersModel!.result!.rows![index].name! + ' ' + _membersModel!.result!.rows![index].lastName!).length > 20 ? (_membersModel!.result!.rows![index].name! + ' ' + _membersModel!.result!.rows![index].lastName!).substring(0, 20) + '...' : (_membersModel!.result!.rows![index].name! + ' ' + _membersModel!.result!.rows![index].lastName!)}",
                                     style: getRegularStyle(
                                         color: ColorConstants.white),
                                   ),
@@ -201,7 +200,7 @@ class _MemberPageState extends State<MemberPage> {
                                   Wrap(
                                     children: [
                                       Text(
-                                        "${_membersModel!.result!.rows![index].email} | ",
+                                        "${_membersModel!.result!.rows![index].email!.length > 20 ? _membersModel!.result!.rows![index].email!.substring(0, 3) + '...' + _membersModel!.result!.rows![index].email!.split("@")[0].substring(_membersModel!.result!.rows![index].email!.split("@")[0].length - 2, _membersModel!.result!.rows![index].email!.split("@")[0].length) + '@' + _membersModel!.result!.rows![index].email!.split("@")[1] : _membersModel!.result!.rows![index].email} | ",
                                         style: getRegularStyle(
                                             color: ColorConstants.lightGrey,
                                             fontSize: FontSizes.s14),

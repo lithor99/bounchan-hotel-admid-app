@@ -11,6 +11,7 @@ Future<String> createRoomService(
     {required String roomNo,
     required String roomTypeId,
     required String price,
+    required String description,
     required List<String?> images}) async {
   String url = "${BASE_URL}/room";
   try {
@@ -18,6 +19,7 @@ Future<String> createRoomService(
       "roomNo": roomNo,
       "roomTypeId": roomTypeId,
       "price": price,
+      "description": description,
       "images": images
     };
     var response = await http.post(Uri.parse(url),
@@ -105,6 +107,7 @@ Future<String> updateRoomService(
     String? roomNo,
     required String roomTypeId,
     required int price,
+    required String description,
     required List<String?> images}) async {
   String url = "${BASE_URL}/room/$id";
   Map body = {};
@@ -114,6 +117,7 @@ Future<String> updateRoomService(
         "roomNo": roomNo,
         "roomTypeId": roomTypeId,
         "price": price,
+        "description": description,
         "images": images,
       };
     } else {

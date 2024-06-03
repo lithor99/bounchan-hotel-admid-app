@@ -223,7 +223,7 @@ class _RoomPageState extends State<RoomPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => RoomAddPage()),
-                    ).then((value) => getRooms());
+                    ).then((value) => getRooms(search: ""));
                   },
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
                   child: Row(

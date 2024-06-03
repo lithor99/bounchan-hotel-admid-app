@@ -531,6 +531,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                                       : _roomNoController.text,
                                   price: int.parse(_priceController.text),
                                   roomTypeId: _roomTypeId!,
+                                  description: _roomDetailController.text,
                                   images: _imageUrls);
                               Navigator.of(_loadingKey.currentContext!,
                                       rootNavigator: true)
@@ -563,6 +564,7 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                                       : _roomNoController.text,
                                   price: int.parse(_priceController.text),
                                   roomTypeId: _roomTypeId!,
+                                  description: _roomDetailController.text,
                                   images: []);
                               Navigator.of(_loadingKey.currentContext!,
                                       rootNavigator: true)

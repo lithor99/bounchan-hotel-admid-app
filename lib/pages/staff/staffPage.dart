@@ -192,21 +192,24 @@ class _StaffPageState extends State<StaffPage> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    "${_staffModels!.result!.rows![index].gender == "ຊາຍ" ? "ທ້າວ" : "ນາງ"} "
-                                    "${_staffModels!.result!.rows![index].name} "
-                                    "${_staffModels!.result!.rows![index].lastName}",
-                                    style: getRegularStyle(
-                                        color: ColorConstants.white),
+                                  SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Text(
+                                      "${_staffModels!.result!.rows![index].gender == "ຊາຍ" ? "ທ້າວ" : "ນາງ"} "
+                                      "${(_staffModels!.result!.rows![index].name! + ' ' + _staffModels!.result!.rows![index].lastName!).length > 20 ? (_staffModels!.result!.rows![index].name! + ' ' + _staffModels!.result!.rows![index].lastName!).substring(0, 20) + '...' : (_staffModels!.result!.rows![index].name! + ' ' + _staffModels!.result!.rows![index].lastName!)}",
+                                      style: getRegularStyle(
+                                          color: ColorConstants.white),
+                                    ),
                                   ),
                                   SizedBox(height: 5),
                                   Wrap(
                                     children: [
                                       Text(
-                                        "${_staffModels!.result!.rows![index].email} | ",
+                                        "${_staffModels!.result!.rows![index].email!.length > 20 ? _staffModels!.result!.rows![index].email!.substring(0, 3) + '...' + _staffModels!.result!.rows![index].email!.split("@")[0].substring(_staffModels!.result!.rows![index].email!.split("@")[0].length - 2, _staffModels!.result!.rows![index].email!.split("@")[0].length) + '@' + _staffModels!.result!.rows![index].email!.split("@")[1] : _staffModels!.result!.rows![index].email} | ",
                                         style: getRegularStyle(
                                             color: ColorConstants.lightGrey,
                                             fontSize: FontSizes.s14),
+                                        maxLines: 2,
                                       ),
                                       Text(
                                         _staffModels!.result!.rows![index]
