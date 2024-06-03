@@ -12,6 +12,7 @@ import 'package:bounchan_hotel_admin_app/services/staffService.dart';
 import 'package:bounchan_hotel_admin_app/widgets/errorDialogWidget.dart';
 import 'package:bounchan_hotel_admin_app/widgets/loadingDialogWidget.dart';
 import 'package:bounchan_hotel_admin_app/widgets/succesDialogWidget.dart';
+import 'package:bounchan_hotel_admin_app/widgets/warningDialogWidget.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -145,16 +146,64 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                               items: _images.map((image) {
                                 return Builder(
                                   builder: (BuildContext context) {
-                                    return Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 5.0),
-                                      decoration: BoxDecoration(
-                                        color: ColorConstants.primary,
-                                      ),
-                                      child: Image.network(
-                                        image!.image ?? "",
-                                        fit: BoxFit.cover,
+                                    return InkWell(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return WarningDialogWidget(
+                                              detail:
+                                                  "ທ່ານຕ້ອງການລຶບຮູບພາບນີ້ບໍ?",
+                                              onConfirm: () async {
+                                                LoadingDialogWidget.showLoading(
+                                                    context, _loadingKey);
+                                                String result =
+                                                    await deleteRoomImageService(
+                                                        id: image.id!);
+                                                Navigator.of(
+                                                        _loadingKey
+                                                            .currentContext!,
+                                                        rootNavigator: true)
+                                                    .pop();
+                                                Navigator.pop(context);
+                                                if (result == "success") {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return SuccessDialogWidget(
+                                                        detail:
+                                                            "ລຶບຮູບພາບສຳເລັດ",
+                                                      );
+                                                    },
+                                                  );
+                                                  getRoom();
+                                                } else {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return ErrorDialogWidget(
+                                                        detail: "ລຶບຮູບຜິດພາດ",
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5.0),
+                                        decoration: BoxDecoration(
+                                          color: ColorConstants.primary,
+                                        ),
+                                        child: Image.network(
+                                          image!.image ?? "",
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     );
                                   },

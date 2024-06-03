@@ -30,9 +30,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String? _image;
-  String? _name;
-  String? _email;
-  String? _phoneNumber;
+  String _name = "";
+  String _email = "";
+  String _phoneNumber = "";
   int? _role = 2;
   BooksModel? _checkInList;
   BooksModel? _checkOutList;
@@ -196,7 +196,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       SizedBox(width: 20),
                       Text(
-                        "${_name!.length > 15 ? _name!.substring(0, 15) + '...' : _name}\n${_email!.length > 15 ? _email!.substring(0, 3) + '...' + _email!.split("@")[0].substring(_email!.split("@")[0].length - 2, _email!.split("@")[0].length) + '@' + _email!.split("@")[1] : _email}\n$_phoneNumber",
+                        "${_name.length > 15 ? _name.substring(0, 15) + '...' : _name}\n${_email.length > 15 ? _email.substring(0, 3) + '...' + _email.split("@")[0].substring(_email.split("@")[0].length - 2, _email.split("@")[0].length) + '@' + _email.split("@")[1] : _email}\n$_phoneNumber",
                         style: getRegularStyle(
                             fontSize: FontSizes.s14,
                             color: ColorConstants.primary),
@@ -417,7 +417,7 @@ class _HomePageState extends State<HomePage> {
                     context: context,
                     builder: (context) {
                       return WarningDialogWidget(
-                        detail: "ທ່ານຕ້ອງອອກຈາກລະບົບບໍ?",
+                        detail: "ທ່ານຕ້ອງການອອກຈາກລະບົບບໍ?",
                         onConfirm: () {
                           StorageManager.deleteData("id");
                           StorageManager.deleteData("name");

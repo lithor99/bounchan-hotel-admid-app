@@ -124,6 +124,7 @@ Future<String> updateRoomService(
       body = {
         "roomTypeId": roomTypeId,
         "price": price,
+        "description": description,
         "images": images,
       };
     }
@@ -136,6 +137,30 @@ Future<String> updateRoomService(
         'Content-Type': 'application/json',
       },
       body: jsonEncode(body),
+    );
+    if (response.statusCode == 200) {
+      return "success";
+    } else {
+      print("Error: ${response.statusCode}");
+      return "failed";
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+//update
+Future<String> deleteRoomImageService({required String id}) async {
+  String url = "${BASE_URL}/room/image/$id";
+  try {
+    // print("------------------------ $id");
+    // print(body);
+    // print("------------------------");
+    var response = await http.delete(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     );
     if (response.statusCode == 200) {
       return "success";
