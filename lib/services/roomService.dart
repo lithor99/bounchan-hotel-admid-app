@@ -101,6 +101,27 @@ Future<RoomModel?> getRoomByIdService({required String id}) async {
   }
 }
 
+//check room no
+Future<String> checkRoomNoService({required String roomNo}) async {
+  String url = "${BASE_URL}/room/check-room-no/$roomNo";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      return "success";
+    } else {
+      print("Error: ${response.statusCode}");
+      return "failed";
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
 //update
 Future<String> updateRoomService(
     {required String id,

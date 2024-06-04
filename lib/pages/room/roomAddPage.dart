@@ -393,82 +393,69 @@ class _RoomAddPageState extends State<RoomAddPage> {
                 child: InkWell(
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
+                      if (_croppedFiles.isEmpty) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ກະລຸນາເພີ່ມຮູບພາບຢ່າງໜ້ອຍໜຶ່ງຮູບ",
+                            );
+                          },
+                        );
+                        return;
+                      }
+                      String results = await checkRoomNoService(
+                          roomNo: _roomNoController.text);
+                      if (results == "success") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ເບີຫ້ອງນີ້ມີຢູ່ແລ້ວ",
+                            );
+                          },
+                        );
+                        return;
+                      }
                       LoadingDialogWidget.showLoading(context, _loadingKey);
-                      if (_croppedFiles.isNotEmpty) {
-                        for (int i = 0; i < _croppedFiles.length; i++) {
-                          UploadModel? uploadModel = await uploadFileService(
-                              file: File(_croppedFiles[i]!.path));
-                          _imageUrls.add(uploadModel!.url!);
-                        }
-                        String result = await createRoomService(
-                            roomNo: _roomNoController.text,
-                            price: _priceController.text,
-                            description: _roomDetailController.text,
-                            roomTypeId: _roomTypeId!,
-                            images: _imageUrls);
-                        Navigator.of(_loadingKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        if (result == "success") {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SuccessDialogWidget(
-                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
-                              );
-                            },
-                          );
-                          setState(() {
-                            _roomNoController.clear();
-                            _priceController.clear();
-                            _roomDetailController.clear();
-                            _croppedFiles.clear();
-                          });
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ErrorDialogWidget(
-                                detail: "ເກີດຂໍ້ຜິດພາດ",
-                              );
-                            },
-                          );
-                        }
+                      for (int i = 0; i < _croppedFiles.length; i++) {
+                        UploadModel? uploadModel = await uploadFileService(
+                            file: File(_croppedFiles[i]!.path));
+                        _imageUrls.add(uploadModel!.url!);
+                      }
+                      String result = await createRoomService(
+                          roomNo: _roomNoController.text,
+                          price: _priceController.text,
+                          description: _roomDetailController.text,
+                          roomTypeId: _roomTypeId!,
+                          images: _imageUrls);
+                      Navigator.of(_loadingKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
+                      if (result == "success") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SuccessDialogWidget(
+                              detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                            );
+                          },
+                        );
+                        setState(() {
+                          _roomNoController.clear();
+                          _priceController.clear();
+                          _roomDetailController.clear();
+                          _croppedFiles.clear();
+                        });
                       } else {
-                        String result = await createRoomService(
-                            roomNo: _roomNoController.text,
-                            price: _priceController.text,
-                            roomTypeId: _roomTypeId!,
-                            description: _roomDetailController.text,
-                            images: _imageUrls);
-                        Navigator.of(_loadingKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        if (result == "success") {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SuccessDialogWidget(
-                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
-                              );
-                            },
-                          );
-                          setState(() {
-                            _roomNoController.clear();
-                            _priceController.clear();
-                            _roomDetailController.clear();
-                            _croppedFiles.clear();
-                          });
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ErrorDialogWidget(
-                                detail: "ເກີດຂໍ້ຜິດພາດ",
-                              );
-                            },
-                          );
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ເກີດຂໍ້ຜິດພາດ",
+                            );
+                          },
+                        );
                       }
                     }
                   },

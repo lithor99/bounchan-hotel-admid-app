@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:bounchan_hotel_admin_app/constants/colors.dart';
 import 'package:bounchan_hotel_admin_app/constants/fonts.dart';
 import 'package:bounchan_hotel_admin_app/constants/styles.dart';
@@ -148,49 +147,63 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                                   builder: (BuildContext context) {
                                     return InkWell(
                                       onTap: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return WarningDialogWidget(
-                                              detail:
-                                                  "ທ່ານຕ້ອງການລຶບຮູບພາບນີ້ບໍ?",
-                                              onConfirm: () async {
-                                                LoadingDialogWidget.showLoading(
-                                                    context, _loadingKey);
-                                                String result =
-                                                    await deleteRoomImageService(
-                                                        id: image.id!);
-                                                Navigator.of(
-                                                        _loadingKey
-                                                            .currentContext!,
-                                                        rootNavigator: true)
-                                                    .pop();
-                                                Navigator.pop(context);
-                                                if (result == "success") {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return SuccessDialogWidget(
-                                                        detail:
-                                                            "ລຶບຮູບພາບສຳເລັດ",
-                                                      );
-                                                    },
-                                                  );
-                                                  getRoom();
-                                                } else {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return ErrorDialogWidget(
-                                                        detail: "ລຶບຮູບຜິດພາດ",
-                                                      );
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                            );
-                                          },
-                                        );
+                                        if (_images.length < 2) {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return ErrorDialogWidget(
+                                                detail:
+                                                    "ບໍ່ສາມາດລຶບຮູບໄດ້ແລ້ວ\nຫ້ອງຕ້ອງມີຮູບຢ່າງໜ້ອຍໜຶ່ງຮູບ",
+                                              );
+                                            },
+                                          );
+                                        } else {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return WarningDialogWidget(
+                                                detail:
+                                                    "ທ່ານຕ້ອງການລຶບຮູບພາບນີ້ບໍ?",
+                                                onConfirm: () async {
+                                                  LoadingDialogWidget
+                                                      .showLoading(
+                                                          context, _loadingKey);
+                                                  String result =
+                                                      await deleteRoomImageService(
+                                                          id: image.id!);
+                                                  Navigator.of(
+                                                          _loadingKey
+                                                              .currentContext!,
+                                                          rootNavigator: true)
+                                                      .pop();
+                                                  Navigator.pop(context);
+                                                  if (result == "success") {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return SuccessDialogWidget(
+                                                          detail:
+                                                              "ລຶບຮູບພາບສຳເລັດ",
+                                                        );
+                                                      },
+                                                    );
+                                                    getRoom();
+                                                  } else {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return ErrorDialogWidget(
+                                                          detail:
+                                                              "ລຶບຮູບຜິດພາດ",
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                },
+                                              );
+                                            },
+                                          );
+                                        }
                                       },
                                       child: Container(
                                         width:
@@ -559,6 +572,22 @@ class _RoomDetailPageState extends State<RoomDetailPage> {
                       child: InkWell(
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
+                            if (_roomNoController.text !=
+                                _roomModel!.result!.roomNo) {
+                              String result = await checkRoomNoService(
+                                  roomNo: _roomNoController.text);
+                              if (result == "success") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ErrorDialogWidget(
+                                      detail: "ເບີຫ້ອງນີ້ມີຢູ່ແລ້ວ",
+                                    );
+                                  },
+                                );
+                                return;
+                              }
+                            }
                             LoadingDialogWidget.showLoading(
                                 context, _loadingKey);
                             if (_croppedFiles.isNotEmpty) {

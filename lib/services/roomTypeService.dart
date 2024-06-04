@@ -72,6 +72,27 @@ Future<RoomTypeModel?> getRoomTypeByIdService({required String id}) async {
   }
 }
 
+//check room type
+Future<String> checkRoomTypeService({required String roomType}) async {
+  String url = "${BASE_URL}/room-type/check-room-type/$roomType";
+  try {
+    var response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      return "success";
+    } else {
+      print("Error: ${response.statusCode}");
+      return "failed";
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
 //update
 Future<String> updateRoomTypeService(
     {required String id, required String name, required String image}) async {

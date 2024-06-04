@@ -202,39 +202,51 @@ class _RoomTypeAddPageState extends State<RoomTypeAddPage> {
                           },
                         );
                         return;
+                      }
+                      String results = await checkRoomTypeService(
+                          roomType: _roomTypeNameController.text);
+                      if (results == "success") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ຊື່ປະເພດຫ້ອງນີ້ມີຢູ່ແລ້ວ",
+                            );
+                          },
+                        );
+                        return;
+                      }
+                      LoadingDialogWidget.showLoading(context, _loadingKey);
+                      UploadModel? uploadModel = await uploadFileService(
+                          file: File(_croppedFile!.path));
+                      String result = await createRoomTypeService(
+                          name: _roomTypeNameController.text,
+                          image: uploadModel!.url!);
+                      Navigator.of(_loadingKey.currentContext!,
+                              rootNavigator: true)
+                          .pop();
+                      if (result == "success") {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SuccessDialogWidget(
+                              detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
+                            );
+                          },
+                        );
+                        setState(() {
+                          _roomTypeNameController.clear();
+                          _croppedFile = null;
+                        });
                       } else {
-                        LoadingDialogWidget.showLoading(context, _loadingKey);
-                        UploadModel? uploadModel = await uploadFileService(
-                            file: File(_croppedFile!.path));
-                        String result = await createRoomTypeService(
-                            name: _roomTypeNameController.text,
-                            image: uploadModel!.url!);
-                        Navigator.of(_loadingKey.currentContext!,
-                                rootNavigator: true)
-                            .pop();
-                        if (result == "success") {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return SuccessDialogWidget(
-                                detail: "ເພີ່ມຂໍ້ມູນສຳເລັດ",
-                              );
-                            },
-                          );
-                          setState(() {
-                            _roomTypeNameController.clear();
-                            _croppedFile = null;
-                          });
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return ErrorDialogWidget(
-                                detail: "ເກີດຂໍ້ຜິດພາດ",
-                              );
-                            },
-                          );
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return ErrorDialogWidget(
+                              detail: "ເກີດຂໍ້ຜິດພາດ",
+                            );
+                          },
+                        );
                       }
                     }
                   },

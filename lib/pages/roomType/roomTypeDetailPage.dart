@@ -244,6 +244,23 @@ class _RoomTypeDetailPageState extends State<RoomTypeDetailPage> {
                       child: InkWell(
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
+                            if (_roomTypeNameController.text !=
+                                    _roomTypeModel!.result!.name ||
+                                _croppedFile != null) {
+                              String results = await checkRoomTypeService(
+                                  roomType: _roomTypeNameController.text);
+                              if (results == "success") {
+                                showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return ErrorDialogWidget(
+                                      detail: "ຊື່ປະເພດຫ້ອງນີ້ມີຢູ່ແລ້ວ",
+                                    );
+                                  },
+                                );
+                                return;
+                              }
+                            }
                             LoadingDialogWidget.showLoading(
                                 context, _loadingKey);
                             if (_croppedFile != null) {
@@ -294,10 +311,7 @@ class _RoomTypeDetailPageState extends State<RoomTypeDetailPage> {
                                     );
                                   },
                                 );
-                                setState(() {
-                                  _roomTypeNameController.clear();
-                                  _croppedFile = null;
-                                });
+                                getRoomType();
                               } else {
                                 showDialog(
                                   context: context,
