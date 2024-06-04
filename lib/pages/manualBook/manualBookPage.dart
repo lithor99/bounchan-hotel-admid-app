@@ -385,7 +385,7 @@ class _ManualBookPageState extends State<ManualBookPage> {
                                                     CrossAxisAlignment.start,
                                                 children: [
                                                   Container(
-                                                    height: 200,
+                                                    height: 198,
                                                     width: 200,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
@@ -497,7 +497,7 @@ class _ManualBookPageState extends State<ManualBookPage> {
                                                         horizontal: 5,
                                                         vertical: 0),
                                                     child: Text(
-                                                      "${_roomsModel!.result![index].rooms![i].description.toString().length > 20 ? _roomsModel!.result![index].rooms![i].description.toString().substring(0, 25) + '...' : _roomsModel!.result![index].rooms![i].description.toString()}",
+                                                      "${_roomsModel!.result![index].rooms![i].description.toString().length > 15 ? _roomsModel!.result![index].rooms![i].description.toString().substring(0, 15) + '...' : _roomsModel!.result![index].rooms![i].description.toString()}",
                                                       style: getRegularStyle(
                                                           color: ColorConstants
                                                               .darkGrey,
