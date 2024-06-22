@@ -53,6 +53,14 @@ class _ReportPageState extends State<ReportPage>
     "4",
   ];
 
+  void requestPermission() async {
+    var status = await Permission.location.request();
+    print("-------------- permission--------: ${status}");
+    if (!status.isGranted) {
+      await Permission.location.request();
+    }
+  }
+
   Future getReportIncome({
     required String startDate,
     required String endDate,
@@ -449,6 +457,8 @@ class _ReportPageState extends State<ReportPage>
         _pageIndex = _tabController!.index;
       }
     });
+
+    requestPermission();
   }
 
   @override
@@ -1305,29 +1315,29 @@ class _ReportPageState extends State<ReportPage>
                 height: 60,
                 child: InkWell(
                   onTap: () async {
-                    if (await Permission.storage.request().isGranted) {
-                      // LoadingDialogWidget.showLoading(context, _loadingKey);
-                      if (_pageIndex == 0) {
-                        await exportIncome();
-                      }
-                      if (_pageIndex == 1) {
-                        await exportBooking();
-                      }
-                      if (_pageIndex == 2) {
-                        await exportMember();
-                      }
-                      // Navigator.of(_loadingKey.currentContext!,
-                      //         rootNavigator: true)
-                      //     .pop();
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SuccessDialogWidget(
-                            detail: "ດາວໂຫຼດສຳເລັດ",
-                          );
-                        },
-                      );
+                    // if (await Permission.storage.request().isDenied) {
+                    // LoadingDialogWidget.showLoading(context, _loadingKey);
+                    if (_pageIndex == 0) {
+                      await exportIncome();
                     }
+                    if (_pageIndex == 1) {
+                      await exportBooking();
+                    }
+                    if (_pageIndex == 2) {
+                      await exportMember();
+                    }
+                    // Navigator.of(_loadingKey.currentContext!,
+                    //         rootNavigator: true)
+                    //     .pop();
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return SuccessDialogWidget(
+                          detail: "ດາວໂຫຼດສຳເລັດ",
+                        );
+                      },
+                    );
+                    // }
                   },
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(10)),
                   child: Row(

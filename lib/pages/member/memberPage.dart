@@ -140,7 +140,7 @@ class _MemberPageState extends State<MemberPage> {
                                 builder: (context) => MemberDetailPage(
                                     id: _membersModel!
                                         .result!.rows![index].id!)),
-                          ).then((value) => getMembers());
+                          ).then((value) => getMembers(search: ""));
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 10),

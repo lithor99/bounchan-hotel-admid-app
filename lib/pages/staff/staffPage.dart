@@ -142,7 +142,7 @@ class _StaffPageState extends State<StaffPage> {
                                       id: _staffModels!
                                           .result!.rows![index].id!,
                                     )),
-                          ).then((value) => getStaffs());
+                          ).then((value) => getStaffs(search: ""));
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 10),
