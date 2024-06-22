@@ -245,8 +245,7 @@ class _RoomTypeDetailPageState extends State<RoomTypeDetailPage> {
                         onTap: () async {
                           if (_formKey.currentState!.validate()) {
                             if (_roomTypeNameController.text !=
-                                    _roomTypeModel!.result!.name ||
-                                _croppedFile != null) {
+                                _roomTypeModel!.result!.name) {
                               String results = await checkRoomTypeService(
                                   roomType: _roomTypeNameController.text);
                               if (results == "success") {
