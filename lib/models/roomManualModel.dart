@@ -84,6 +84,7 @@ class Rooms {
   String? roomTypeId;
   String? roomNo;
   int? price;
+  dynamic lastCheckIn;
   dynamic lastCheckOut;
   String? description;
   int? status;
@@ -98,6 +99,7 @@ class Rooms {
       this.roomTypeId,
       this.roomNo,
       this.price,
+      this.lastCheckIn,
       this.lastCheckOut,
       this.description,
       this.status,
@@ -112,6 +114,7 @@ class Rooms {
     roomTypeId = json['roomTypeId'];
     roomNo = json['roomNo'];
     price = json['price'];
+    lastCheckIn = json['lastCheckIn'];
     lastCheckOut = json['lastCheckOut'];
     description = json['description'];
     status = json['status'];
@@ -135,6 +138,7 @@ class Rooms {
     data['roomTypeId'] = this.roomTypeId;
     data['roomNo'] = this.roomNo;
     data['price'] = this.price;
+    data['lastCheckIn'] = this.lastCheckIn;
     data['lastCheckOut'] = this.lastCheckOut;
     data['description'] = this.description;
     data['status'] = this.status;
