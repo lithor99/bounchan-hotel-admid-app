@@ -194,7 +194,7 @@ class BookChartWidget extends StatelessWidget {
       ),
       spots: List.generate(
           data.result!.length,
-          (i) => FlSpot(data.result!.length.toDouble(),
+          (i) => FlSpot((i + 1).toDouble(),
               data.result![i].book!.success!.toDouble() / 100)));
 
   ///red line data
@@ -207,6 +207,6 @@ class BookChartWidget extends StatelessWidget {
       belowBarData: BarAreaData(show: false),
       spots: List.generate(
           data.result!.length,
-          (i) => FlSpot(data.result!.length.toDouble(),
+          (i) => FlSpot((i + 1).toDouble(),
               data.result![i].book!.cancel!.toDouble() / 100)));
 }

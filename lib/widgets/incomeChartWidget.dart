@@ -187,6 +187,6 @@ class IncomeChartWidget extends StatelessWidget {
       belowBarData: BarAreaData(show: false),
       spots: List.generate(
           data.result!.length,
-          (i) => FlSpot(data.result!.length.toDouble(),
+          (i) => FlSpot((i + 1).toDouble(),
               double.parse(data.result![i].income!.toString()) / 10000000)));
 }

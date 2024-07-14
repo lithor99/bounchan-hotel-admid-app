@@ -187,6 +187,6 @@ class MemberChartWidget extends StatelessWidget {
       belowBarData: BarAreaData(show: false),
       spots: List.generate(
           data.result!.length,
-          (i) => FlSpot(data.result!.length.toDouble(),
-              double.parse(data.result![i].member.toString()))));
+          (i) => FlSpot((i + 1).toDouble(),
+              double.parse(data.result![i].member.toString()) / 100)));
 }
