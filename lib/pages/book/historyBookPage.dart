@@ -457,7 +457,7 @@ class _HistoryBookPageState extends State<HistoryBookPage> {
                                                                           .status ==
                                                                       3
                                                                   ? ColorConstants
-                                                                      .black
+                                                                      .primary
                                                                   : ColorConstants
                                                                       .error,
                                                       fontSize: FontSizes.s16,

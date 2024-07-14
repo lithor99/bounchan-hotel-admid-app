@@ -316,7 +316,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                                   : _bookModel!.result!.status == 2
                                       ? ColorConstants.success
                                       : _bookModel!.result!.status == 3
-                                          ? ColorConstants.black
+                                          ? ColorConstants.primary
                                           : ColorConstants.error,
                             )),
                       ),
