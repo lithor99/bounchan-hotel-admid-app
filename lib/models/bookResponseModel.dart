@@ -21,6 +21,7 @@ class Result {
   String? id;
   int? status;
   String? memberId;
+  String? billNo;
   int? amount;
   String? checkInDate;
   String? checkOutDate;
@@ -31,6 +32,7 @@ class Result {
       {this.id,
       this.status,
       this.memberId,
+      this.billNo,
       this.amount,
       this.checkInDate,
       this.checkOutDate,
@@ -41,6 +43,7 @@ class Result {
     id = json['id'];
     status = json['status'];
     memberId = json['memberId'];
+    billNo = json['billNo'];
     amount = json['amount'];
     checkInDate = json['checkInDate'];
     checkOutDate = json['checkOutDate'];
@@ -53,6 +56,7 @@ class Result {
     data['id'] = this.id;
     data['status'] = this.status;
     data['memberId'] = this.memberId;
+    data['billNo'] = this.billNo;
     data['amount'] = this.amount;
     data['checkInDate'] = this.checkInDate;
     data['checkOutDate'] = this.checkOutDate;

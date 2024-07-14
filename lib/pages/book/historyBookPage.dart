@@ -405,27 +405,64 @@ class _HistoryBookPageState extends State<HistoryBookPage> {
                                               fontSize: FontSizes.s12),
                                         ),
                                         SizedBox(height: 5),
-                                        Text(
-                                          _booksModel!.result!.rows![index]
-                                                      .status ==
-                                                  1
-                                              ? "ສະຖານະ: ລໍຖ້າແຈ້ງເຂົ້າ"
-                                              : _booksModel!
-                                                          .result!
-                                                          .rows![index]
-                                                          .status ==
-                                                      2
-                                                  ? "ສະຖານະ: ລໍຖ້າແຈ້ງອອກ"
-                                                  : _booksModel!
-                                                              .result!
-                                                              .rows![index]
-                                                              .status ==
-                                                          3
-                                                      ? "ສະຖານະ: ແຈ້ງອອກແລ້ວ"
-                                                      : "ສະຖານະ: ຍົກເລີກການຈອງ",
-                                          style: getRegularStyle(
-                                              color: ColorConstants.lightGrey,
-                                              fontSize: FontSizes.s12),
+                                        RichText(
+                                          text: TextSpan(
+                                              text: "ສະຖານະ: ",
+                                              style: getRegularStyle(
+                                                color: ColorConstants.lightGrey,
+                                                fontSize: FontSizes.s16,
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                    text: _booksModel!
+                                                                .result!
+                                                                .rows![index]
+                                                                .status ==
+                                                            1
+                                                        ? "ລໍຖ້າແຈ້ງເຂົ້າ"
+                                                        : _booksModel!
+                                                                    .result!
+                                                                    .rows![
+                                                                        index]
+                                                                    .status ==
+                                                                2
+                                                            ? "ລໍຖ້າແຈ້ງອອກ"
+                                                            : _booksModel!
+                                                                        .result!
+                                                                        .rows![
+                                                                            index]
+                                                                        .status ==
+                                                                    3
+                                                                ? "ແຈ້ງອອກແລ້ວ"
+                                                                : "ຍົກເລີກການຈອງ",
+                                                    style: getRegularStyle(
+                                                      color: _booksModel!
+                                                                  .result!
+                                                                  .rows![index]
+                                                                  .status ==
+                                                              1
+                                                          ? ColorConstants.info
+                                                          : _booksModel!
+                                                                      .result!
+                                                                      .rows![
+                                                                          index]
+                                                                      .status ==
+                                                                  2
+                                                              ? ColorConstants
+                                                                  .success
+                                                              : _booksModel!
+                                                                          .result!
+                                                                          .rows![
+                                                                              index]
+                                                                          .status ==
+                                                                      3
+                                                                  ? ColorConstants
+                                                                      .black
+                                                                  : ColorConstants
+                                                                      .error,
+                                                      fontSize: FontSizes.s16,
+                                                    ))
+                                              ]),
                                         ),
                                       ],
                                     ),

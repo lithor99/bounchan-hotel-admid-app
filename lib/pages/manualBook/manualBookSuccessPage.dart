@@ -44,7 +44,7 @@ class _ManualBookSuccessPageState extends State<ManualBookSuccessPage> {
           : Container(
               width: double.infinity,
               height: double.infinity,
-              padding: EdgeInsets.only(top: 60),
+              padding: EdgeInsets.only(top: 40),
               decoration: BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage("assets/images/bg_success.png"),
@@ -53,7 +53,14 @@ class _ManualBookSuccessPageState extends State<ManualBookSuccessPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    SizedBox(height: 10),
+                    Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                          image: DecorationImage(
+                              image: AssetImage("assets/images/logo.png"),
+                              fit: BoxFit.cover)),
+                    ),
                     Wrap(
                       alignment: WrapAlignment.spaceBetween,
                       crossAxisAlignment: WrapCrossAlignment.center,
@@ -78,7 +85,6 @@ class _ManualBookSuccessPageState extends State<ManualBookSuccessPage> {
                                     color: ColorConstants.success)),
                           ),
                         ),
-                        SizedBox(width: 10),
                         Padding(
                           padding: const EdgeInsets.only(right: 20),
                           child: Text(
@@ -89,7 +95,12 @@ class _ManualBookSuccessPageState extends State<ManualBookSuccessPage> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 40),
+                    SizedBox(height: 20),
+                    Text("ເລກບິນ: ${_bookModel!.result!.billNo}",
+                        style: getRegularStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorConstants.black)),
+                    SizedBox(height: 20),
                     Wrap(
                       alignment: WrapAlignment.spaceBetween,
                       crossAxisAlignment: WrapCrossAlignment.end,

@@ -74,15 +74,15 @@ class _LoginPageState extends State<LoginPage> {
                               height: 150,
                               width: 150,
                               decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: ColorConstants.primary, width: 3),
-                                  borderRadius: BorderRadius.circular(6),
+                                  // border: Border.all(
+                                  //     color: ColorConstants.primary, width: 3),
+                                  // borderRadius: BorderRadius.circular(6),
                                   image: DecorationImage(
                                       image: AssetImage(
-                                          "assets/images/logo.jpg"))),
+                                          "assets/images/logo.png"))),
                             ),
                           ),
-                          SizedBox(height: 30),
+                          SizedBox(height: 10),
                           Center(
                             child: Text(
                               "ຍິນດີຕ້ອນຮັບເຂົ້າສູ່ລະບົບ",

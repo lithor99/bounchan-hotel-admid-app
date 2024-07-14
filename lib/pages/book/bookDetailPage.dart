@@ -274,20 +274,14 @@ class _BookDetailPageState extends State<BookDetailPage> {
                               horizontal: 10, vertical: 10),
                           child: RichText(
                             text: TextSpan(
-                                text: "ສະຖານະ:\n",
+                                text: "ເລກບິນ:\n",
                                 style: getRegularStyle(
                                   color: ColorConstants.lightGrey,
                                   fontSize: FontSizes.s16,
                                 ),
                                 children: [
                                   TextSpan(
-                                      text: _bookModel!.result!.status == 1
-                                          ? "ລໍຖ້າແຈ້ງເຂົ້າ"
-                                          : _bookModel!.result!.status == 2
-                                              ? "ລໍຖ້າແຈ້ງອອກ"
-                                              : _bookModel!.result!.status == 3
-                                                  ? "ແຈ້ງອອກແລ້ວ"
-                                                  : "ຍົກເລີກການຈອງ",
+                                      text: _bookModel!.result!.billNo ?? "",
                                       style: getRegularStyle(
                                         color: ColorConstants.white,
                                         fontSize: FontSizes.s16,
@@ -295,6 +289,36 @@ class _BookDetailPageState extends State<BookDetailPage> {
                                 ]),
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(color: ColorConstants.lightGrey, height: 1),
+                IntrinsicHeight(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 20),
+                        child: Text(
+                            _bookModel!.result!.status == 1
+                                ? " ລໍຖ້າແຈ້ງເຂົ້າ"
+                                : _bookModel!.result!.status == 2
+                                    ? " ລໍຖ້າແຈ້ງອອກ"
+                                    : _bookModel!.result!.status == 3
+                                        ? " ແຈ້ງອອກແລ້ວ"
+                                        : " ຍົກເລີກການຈອງ",
+                            style: getBoldStyle(
+                              fontSize: FontSizes.s18,
+                              color: _bookModel!.result!.status == 1
+                                  ? ColorConstants.info
+                                  : _bookModel!.result!.status == 2
+                                      ? ColorConstants.success
+                                      : _bookModel!.result!.status == 3
+                                          ? ColorConstants.black
+                                          : ColorConstants.error,
+                            )),
                       ),
                     ],
                   ),

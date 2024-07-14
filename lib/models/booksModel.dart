@@ -46,6 +46,7 @@ class Result {
 class Rows {
   String? id;
   String? memberId;
+  String? billNo;
   int? amount;
   String? checkInDate;
   String? checkOutDate;
@@ -59,6 +60,7 @@ class Rows {
   Rows(
       {this.id,
       this.memberId,
+      this.billNo,
       this.amount,
       this.checkInDate,
       this.checkOutDate,
@@ -72,6 +74,7 @@ class Rows {
   Rows.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     memberId = json['memberId'];
+    billNo = json['billNo'];
     amount = json['amount'];
     checkInDate = json['checkInDate'];
     checkOutDate = json['checkOutDate'];
@@ -88,6 +91,7 @@ class Rows {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['memberId'] = this.memberId;
+    data['billNo'] = this.billNo;
     data['amount'] = this.amount;
     data['checkInDate'] = this.checkInDate;
     data['checkOutDate'] = this.checkOutDate;
