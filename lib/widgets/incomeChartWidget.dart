@@ -24,7 +24,7 @@ class IncomeChartWidget extends StatelessWidget {
         titlesData: titlesData1,
         borderData: borderData,
         lineBarsData: lineBarsData1,
-        backgroundColor: ColorConstants.black,
+        backgroundColor: ColorConstants.white,
         minX: 0,
         maxX: 12,
         maxY: 11,
@@ -34,7 +34,7 @@ class IncomeChartWidget extends StatelessWidget {
   LineTouchData get lineTouchData1 => LineTouchData(
         handleBuiltInTouches: true,
         touchTooltipData:
-            LineTouchTooltipData(tooltipBgColor: ColorConstants.danger),
+            LineTouchTooltipData(tooltipBgColor: ColorConstants.black),
       );
 
   FlTitlesData get titlesData1 => FlTitlesData(
@@ -97,7 +97,8 @@ class IncomeChartWidget extends StatelessWidget {
     }
 
     return Text(text,
-        style: getRegularStyle(fontSize: FontSizes.s8),
+        style: getRegularStyle(
+            fontSize: FontSizes.s8, color: ColorConstants.black),
         textAlign: TextAlign.right);
   }
 
@@ -112,40 +113,64 @@ class IncomeChartWidget extends StatelessWidget {
     Widget text;
     switch (value.toInt()) {
       case 1:
-        text = Text('JAN', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ມັງກອນ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 2:
-        text = Text('FEB', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ກຸມພາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 3:
-        text = Text('MAR', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ມີນາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 4:
-        text = Text('APR', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ເມສາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 5:
-        text = Text('MAY', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ພຶດສະພາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 6:
-        text = Text('JUN', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ມີຖຸນາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 7:
-        text = Text('JUL', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ກໍລະກົດ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 8:
-        text = Text('AUG', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ສິງຫາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 9:
-        text = Text('SEP', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ກັນຍາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 10:
-        text = Text('OCT', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ຕຸລາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 11:
-        text = Text('NOV', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ພະຈິກ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       case 12:
-        text = Text('DEC', style: getRegularStyle(fontSize: FontSizes.s8));
+        text = Text('ທັນວາ',
+            style: getRegularStyle(
+                fontSize: FontSizes.s8, color: ColorConstants.black));
         break;
       default:
         text = Text('');
@@ -180,7 +205,7 @@ class IncomeChartWidget extends StatelessWidget {
       );
   LineChartBarData get lineChartBarData => LineChartBarData(
       isCurved: true,
-      color: ColorConstants.primary,
+      color: ColorConstants.success,
       barWidth: 2,
       isStrokeCapRound: true,
       dotData: FlDotData(show: false),

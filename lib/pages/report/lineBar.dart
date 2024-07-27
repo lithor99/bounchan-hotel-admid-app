@@ -12,14 +12,14 @@ import 'package:bounchan_hotel_admin_app/widgets/memberChartWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ChartPage extends StatefulWidget {
-  const ChartPage({super.key});
+class LineChartPage extends StatefulWidget {
+  const LineChartPage({super.key});
 
   @override
-  State<ChartPage> createState() => _ChartPageState();
+  State<LineChartPage> createState() => _LineChartPageState();
 }
 
-class _ChartPageState extends State<ChartPage> {
+class _LineChartPageState extends State<LineChartPage> {
   final _yearController = TextEditingController();
   DateTime? _startYear;
   ReportChartModel? _reportChartModel;
@@ -142,7 +142,7 @@ class _ChartPageState extends State<ChartPage> {
                     Container(
                       height: MediaQuery.of(context).size.width,
                       width: double.infinity,
-                      color: ColorConstants.black,
+                      color: ColorConstants.white,
                       child: AspectRatio(
                         aspectRatio: 1.23,
                         child: Stack(
@@ -157,14 +157,14 @@ class _ChartPageState extends State<ChartPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         right: 10, left: 6),
-                                    // child:
-                                    //     //Chart()
-                                    //     MemberChartWidget(
-                                    //   data: _reportChartModel!,
-                                    // ),
-                                    child: MemberChartBar(
+                                    child:
+                                        //Chart()
+                                        MemberChartWidget(
                                       data: _reportChartModel!,
                                     ),
+                                    // child:MemberChartBar(
+                                    //   data: _reportChartModel!,
+                                    // ),
                                   ),
                                 ),
                               ],
@@ -176,11 +176,14 @@ class _ChartPageState extends State<ChartPage> {
                     SizedBox(height: 5),
                     Text(
                         "ເສັ້ນສະແດງການສະໝັກເປັນສະມາຊິກປະຈຳປີ ${_yearController.text}",
-                        style: getBoldStyle(fontSize: FontSizes.s16)),
+                        style: getBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorConstants.white)),
+                    SizedBox(height: 10),
                     Container(
                       height: MediaQuery.of(context).size.width,
                       width: double.infinity,
-                      color: ColorConstants.black,
+                      color: ColorConstants.white,
                       child: AspectRatio(
                         aspectRatio: 1.23,
                         child: Stack(
@@ -195,12 +198,12 @@ class _ChartPageState extends State<ChartPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         right: 10, left: 6),
-                                    // child: BookChartWidget(
-                                    //   data: _reportChartModel!,
-                                    // ),
-                                    child: BookChartBar(
+                                    child: BookChartWidget(
                                       data: _reportChartModel!,
                                     ),
+                                    // child: BookChartBar(
+                                    //   data: _reportChartModel!,
+                                    // ),
                                   ),
                                 ),
                               ],
@@ -211,7 +214,10 @@ class _ChartPageState extends State<ChartPage> {
                     ),
                     SizedBox(height: 5),
                     Text("ເສັ້ນສະແດງການຈອງປະຈຳປີ ${_yearController.text}",
-                        style: getBoldStyle(fontSize: FontSizes.s16)),
+                        style: getBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorConstants.white)),
+                    SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -221,7 +227,9 @@ class _ChartPageState extends State<ChartPage> {
                           color: ColorConstants.success,
                         ),
                         SizedBox(width: 5),
-                        Text("ລາຍການສຳເລັດ", style: getRegularStyle()),
+                        Text("ລາຍການສຳເລັດ",
+                            style:
+                                getRegularStyle(color: ColorConstants.white)),
                         SizedBox(width: 50),
                         Container(
                           height: 10,
@@ -229,13 +237,16 @@ class _ChartPageState extends State<ChartPage> {
                           color: ColorConstants.danger,
                         ),
                         SizedBox(width: 5),
-                        Text("ລາຍການຍົກເລີກ", style: getRegularStyle()),
+                        Text("ລາຍການຍົກເລີກ",
+                            style:
+                                getRegularStyle(color: ColorConstants.white)),
                       ],
                     ),
+                    SizedBox(height: 10),
                     Container(
                       height: MediaQuery.of(context).size.width,
                       width: double.infinity,
-                      color: ColorConstants.black,
+                      color: ColorConstants.white,
                       child: AspectRatio(
                         aspectRatio: 1.23,
                         child: Stack(
@@ -250,12 +261,12 @@ class _ChartPageState extends State<ChartPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         right: 10, left: 6),
-                                    // child: IncomeChartWidget(
-                                    //   data: _reportChartModel!,
-                                    // ),
-                                    child: IncomeChartBar(
+                                    child: IncomeChartWidget(
                                       data: _reportChartModel!,
                                     ),
+                                    // child: IncomeChartBar(
+                                    //   data: _reportChartModel!,
+                                    // ),
                                   ),
                                 ),
                               ],
@@ -266,7 +277,9 @@ class _ChartPageState extends State<ChartPage> {
                     ),
                     SizedBox(height: 5),
                     Text("ເສັ້ນສະແດງລາຍຮັບປະຈຳປີ ${_yearController.text}",
-                        style: getBoldStyle(fontSize: FontSizes.s16)),
+                        style: getBoldStyle(
+                            fontSize: FontSizes.s16,
+                            color: ColorConstants.white)),
                     SizedBox(height: 10),
                   ],
                 ),

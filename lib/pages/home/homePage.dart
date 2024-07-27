@@ -11,6 +11,7 @@ import 'package:bounchan_hotel_admin_app/pages/checkOut/checkOutPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/manualBook/manualBookPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/member/memberPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/profile/profilePage.dart';
+import 'package:bounchan_hotel_admin_app/pages/report/my_bar_chart.dart';
 import 'package:bounchan_hotel_admin_app/pages/report/reportPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/room/roomPage.dart';
 import 'package:bounchan_hotel_admin_app/pages/roomType/roomTypePage.dart';
@@ -400,6 +401,10 @@ class _HomePageState extends State<HomePage> {
                           context,
                           MaterialPageRoute(builder: (context) => ReportPage()),
                         );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => MyBarchart()),
+                        // );
                       },
                     ),
               ListTile(
